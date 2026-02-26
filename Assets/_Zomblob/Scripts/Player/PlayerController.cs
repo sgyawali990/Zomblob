@@ -3,14 +3,17 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    public float rotateSpeed = 360f;
     public float aimDistance = 10f;
 
-    LineRenderer line;
+    public LineRenderer line;
+    public Vector3 AimDirection { get; private set; }
 
     void Start()
     {
-        line = GetComponent<LineRenderer>();
+        // Top-down aiming uses visible cursor
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         line.positionCount = 2;
     }
 
@@ -37,15 +40,27 @@ public class PlayerController : MonoBehaviour
             transform.position += moveDir * moveSpeed * Time.deltaTime;
         }
 
-        // Rotation
-        float mouseX = Input.GetAxis("Mouse X");
-        transform.Rotate(Vector3.up * mouseX * rotateSpeed * Time.deltaTime);
+        // Aim using mouse position in world
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        // Aim line
-        Vector3 origin = transform.position + Vector3.up * 0.5f;
-        Vector3 end = origin + transform.forward * aimDistance;
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        {
+            Vector3 lookPoint = hit.point;
+            lookPoint.y = transform.position.y;
 
-        line.SetPosition(0, origin);
-        line.SetPosition(1, end);
+            AimDirection = (lookPoint - transform.position).normalized;
+
+            if (AimDirection.sqrMagnitude > 0.001f)
+            {
+                transform.rotation = Quaternion.LookRotation(AimDirection);
+            }
+
+            // Aim line
+            Vector3 origin = transform.position + Vector3.up * 0.5f;
+            Vector3 end = origin + AimDirection * aimDistance;
+
+            line.SetPosition(0, origin);
+            line.SetPosition(1, end);
+        }
     }
 }
