@@ -5,16 +5,14 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float aimDistance = 10f;
 
-    public LineRenderer line;
-    public Vector3 AimDirection { get; private set; }
+    // World-space point the player is aiming at
+    public Vector3 AimPoint { get; private set; }
 
     void Start()
     {
         // Top-down aiming uses visible cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-
-        line.positionCount = 2;
     }
 
     void Update()
@@ -45,22 +43,18 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
-            Vector3 lookPoint = hit.point;
-            lookPoint.y = transform.position.y;
+            Vector3 aimPoint = hit.point;
 
-            AimDirection = (lookPoint - transform.position).normalized;
+            // Flatten aim point to player height
+            aimPoint.y = transform.position.y;
+            AimPoint = aimPoint;
 
-            if (AimDirection.sqrMagnitude > 0.001f)
+            Vector3 lookDir = AimPoint - transform.position;
+
+            if (lookDir.sqrMagnitude > 0.001f)
             {
-                transform.rotation = Quaternion.LookRotation(AimDirection);
+                transform.rotation = Quaternion.LookRotation(lookDir.normalized);
             }
-
-            // Aim line
-            Vector3 origin = transform.position + Vector3.up * 0.5f;
-            Vector3 end = origin + AimDirection * aimDistance;
-
-            line.SetPosition(0, origin);
-            line.SetPosition(1, end);
         }
     }
 }
