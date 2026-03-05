@@ -1,33 +1,35 @@
 using UnityEngine;
+using System;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
+    public static event Action EnemyDied;
+
     [Header("Health")]
     [SerializeField] private float maxHealth = 50f;
     private float currentHealth;
 
-    [Header("Respawn (TEMP)")]
-    [SerializeField] private bool enableRespawn = true;
-    [SerializeField] private float respawnDelay = 3f;
-
+    [Header("Visual")]
     [SerializeField] private Renderer enemyRenderer;
     [SerializeField] private Color hitColor = Color.red;
-    [SerializeField] private float hitFlashTime = 0.1f;
+    [SerializeField] private float flashTime = 0.1f;
 
+    [Header("Knockback")]
     [SerializeField] private float knockbackForce = 3f;
 
     private Rigidbody rb;
+    private UnityEngine.AI.NavMeshAgent agent;
     private Color originalColor;
-    private Vector3 spawnPosition;
 
-    private Coroutine hitFlashRoutine;
+    private ZombiePool owningPool;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
 
-        spawnPosition = transform.position;
         currentHealth = maxHealth;
 
         if (enemyRenderer != null)
@@ -38,23 +40,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         currentHealth -= amount;
 
-        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        if (agent != null)
-            agent.enabled = false;
-
-        if (currentHealth <= 0f)
+        if (currentHealth <= 0)
         {
             Die();
             return;
         }
 
-        if (enemyRenderer != null)
-        {
-            if (hitFlashRoutine != null)
-                StopCoroutine(hitFlashRoutine);
+        StartCoroutine(HitFlash());
 
-            hitFlashRoutine = StartCoroutine(HitFlash());
-        }
+        if (agent != null)
+            agent.enabled = false;
 
         if (rb != null)
         {
@@ -67,21 +62,19 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             rb.AddForce(knockDir * knockbackForce, ForceMode.Impulse);
         }
 
-        StartCoroutine(ReenableAgent(agent));
+        StartCoroutine(ReenableAgent());
     }
 
-    // Turn AI back on after knockback
-    IEnumerator ReenableAgent(UnityEngine.AI.NavMeshAgent agent)
+    
+
+    IEnumerator ReenableAgent()
     {
         yield return new WaitForSeconds(0.4f);
 
         if (rb != null)
         {
-            rb.isKinematic = false;
-
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-
             rb.isKinematic = true;
         }
 
@@ -91,12 +84,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     void Die()
     {
-        StartCoroutine(Death());
-    }
-
-    IEnumerator Death()
-    {
-        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        EnemyDied?.Invoke();
 
         if (agent != null)
             agent.enabled = false;
@@ -104,58 +92,41 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (rb != null)
         {
             rb.isKinematic = false;
-            rb.useGravity = true;
-
             rb.AddForce(Vector3.up * 2f, ForceMode.Impulse);
-            rb.AddTorque(Random.insideUnitSphere * 6f, ForceMode.Impulse);
         }
 
-        yield return new WaitForSeconds(2f);
-
-        if (enableRespawn)
-            StartCoroutine(Respawn());
-        else
-            Destroy(gameObject);
-    }
-
-    IEnumerator Respawn()
-    {
-        foreach (var r in GetComponentsInChildren<Renderer>())
-            r.enabled = false;
-
-        foreach (var c in GetComponents<Collider>())
-            c.enabled = false;
-
-        yield return new WaitForSeconds(respawnDelay);
-
-        transform.position = spawnPosition;
-        currentHealth = maxHealth;
-
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-
-            rb.isKinematic = true;
-        }
-
-        foreach (var r in GetComponentsInChildren<Renderer>())
-            r.enabled = true;
-
-        foreach (var c in GetComponents<Collider>())
-            c.enabled = true;
-
-        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-        if (agent != null)
-            agent.enabled = true;
+        owningPool.Release(gameObject);
     }
 
     IEnumerator HitFlash()
     {
-        enemyRenderer.material.color = hitColor;
-        yield return new WaitForSeconds(hitFlashTime);
-        enemyRenderer.material.color = originalColor;
+        if (enemyRenderer != null)
+        {
+            enemyRenderer.material.color = hitColor;
+            yield return new WaitForSeconds(flashTime);
+            enemyRenderer.material.color = originalColor;
+        }
     }
+
+    public void Init(ZombiePool pool)
+    {
+        owningPool = pool;
+        currentHealth = maxHealth;
+
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (agent != null)
+        {
+            agent.enabled = true;
+        }
+        
+    }
+
+    
 }
