@@ -31,24 +31,27 @@ public class EnemyMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return;
+
         if (playerTransform != null)
         {
             agent.SetDestination(playerTransform.position);
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionStay(Collision collision)
     {
-        if (Time.time - lastAttackTime < attackCoolDown)
-        {
+        if (Time.time < lastAttackTime)
             return;
-        }
 
         if (collision.gameObject.TryGetComponent<PlayerHealth>(out PlayerHealth player))
         {
-            player.TakeDamage((int)damage); // Use the serialized damage value
+            player.TakeDamage((int)damage);
+
             Debug.Log("Enemy collided with player!");
-            lastAttackTime = Time.time + attackCoolDown; // Reset attack cooldown
+
+            lastAttackTime = Time.time + attackCoolDown;
         }
     }
 }

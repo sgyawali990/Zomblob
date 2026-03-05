@@ -33,9 +33,11 @@ public class PlayerController : MonoBehaviour
 
         Vector3 moveDir = camForward * v + camRight * h;
 
+        Rigidbody rb = GetComponent<Rigidbody>();
+
         if (moveDir.sqrMagnitude > 0.001f)
         {
-            transform.position += moveDir * moveSpeed * Time.deltaTime;
+            rb.MovePosition(rb.position + moveDir * moveSpeed * Time.deltaTime);
         }
 
         // Aim using mouse position in world
