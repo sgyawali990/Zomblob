@@ -12,8 +12,11 @@ EditorBuildSettings:
     path: Assets/_Zomblob/Scenes/Menu/MainMenu.unity
     guid: 902c5a834ca0b66479f82e662df50438
   - enabled: 1
-    path: Assets/_Zomblob/Scenes/Menu/Pause Scene.unity
+    path: Assets/_Zomblob/Scenes/Menu/Options.unity
     guid: be3f6f3ec22554942a4dc87719a7bd6d
+  - enabled: 1
+    path: Assets/_Zomblob/Scenes/Arena_Test.unity
+    guid: 8711bc402d66d0044b3600db263ca4af
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

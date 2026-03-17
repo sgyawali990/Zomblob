@@ -737,7 +737,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 201040f38d51c7146bc3e1b1089f3470, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
-  firstLevelName: Pause Scene
+  firstLevelName: Arena_Test
+  OptionsMenu: Options
 --- !u!1 &2078612473
 GameObject:
   m_ObjectHideFlags: 0
