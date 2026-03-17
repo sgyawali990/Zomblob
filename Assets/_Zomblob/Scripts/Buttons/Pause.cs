@@ -31,4 +31,13 @@ public class Pause : MonoBehaviour
         Time.timeScale = 0f;
         isPaused = true;
     }
+    public void LoadMenu()
+    {
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }
