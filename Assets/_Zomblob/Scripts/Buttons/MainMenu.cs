@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     public string firstLevelName = "Level1";
+    public string OptionsMenu = "options here";
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,7 +22,7 @@ public class MainMenu : MonoBehaviour
     }
     public void openOptions()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Options");
+        UnityEngine.SceneManagement.SceneManager.LoadScene(OptionsMenu);
     }
     public void closeOptions()
     {
