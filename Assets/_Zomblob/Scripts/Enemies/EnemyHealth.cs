@@ -98,8 +98,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             rb.isKinematic = false;
             rb.AddForce(Vector3.up * 2f, ForceMode.Impulse);
         }
-
-        owningPool.Release(gameObject);
+        
+        // null check
+        if (owningPool != null)
+        {
+            owningPool.Release(gameObject);
+        }
+        else
+        {
+            // fallback for non-pooled zombies
+            Destroy(gameObject);
+        }
     }
 
     IEnumerator HitFlash()
@@ -117,13 +126,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         owningPool = pool;
         currentHealth = maxHealth;
 
-        if (!rb.isKinematic)
+        if (rb != null)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-        }
 
-        rb.isKinematic = true;
+            rb.isKinematic = true;
+        }
 
         if (agent != null)
         {

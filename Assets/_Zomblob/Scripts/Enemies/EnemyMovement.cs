@@ -1,24 +1,25 @@
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Rendering;
-
 
 public class EnemyMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float rotationSpeed = 120f;
+    [SerializeField] private float moveSpeed = 2.5f;
+
+    // How often we update the path (prevents spam)
+    [SerializeField] private float repathRate = 0.25f;
+    private float repathTimer;
 
     private NavMeshAgent agent;
-    [SerializeField] public Transform playerTransform;
+
+    [Header("Target")]
+    [SerializeField] private Transform playerTransform;
 
     [Header("Damage")]
     [SerializeField] private float damage = 10f;
-    [SerializeField] private float attackCoolDown = 1f;
-    private float lastAttackTime;
+    [SerializeField] private float attackCooldown = 1f;
+    private float nextAttackTime;
 
-    private float repathTimer;
-    [SerializeField] private float repathRate = 0.25f;
 
     void Start()
     {
@@ -26,10 +27,21 @@ public class EnemyMovement : MonoBehaviour
 
         if (agent != null)
         {
+            // Movement
             agent.speed = moveSpeed;
-            agent.angularSpeed = rotationSpeed;
+
+            // NavMesh handles rotation
+            agent.updateRotation = true;
+
+            // These matter for turning
+            agent.angularSpeed = 300f;   
+            agent.acceleration = 20f;
+
+            // Prevent zombie from walking into player
+            agent.stoppingDistance = 1f;
         }
 
+        // Auto-find player if not assigned
         if (playerTransform == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -38,7 +50,7 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if (agent == null || !agent.enabled || !agent.isOnNavMesh)
@@ -47,6 +59,7 @@ public class EnemyMovement : MonoBehaviour
         if (playerTransform == null)
             return;
 
+        // Repath timer
         repathTimer -= Time.deltaTime;
 
         if (repathTimer <= 0f)
@@ -56,18 +69,17 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
+
     private void OnCollisionStay(Collision collision)
     {
-        if (Time.time < lastAttackTime)
+        if (Time.time < nextAttackTime)
             return;
 
         if (collision.gameObject.TryGetComponent<PlayerHealth>(out PlayerHealth player))
         {
             player.TakeDamage((int)damage);
 
-            Debug.Log("Enemy collided with player!");
-
-            lastAttackTime = Time.time + attackCoolDown;
+            nextAttackTime = Time.time + attackCooldown;
         }
     }
 }
