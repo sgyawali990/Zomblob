@@ -1,80 +1,94 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class WeaponController : MonoBehaviour
 {
+    [Header("References")]
     public FireInput fireInput;
     public PlayerController playerController;
-
+    private PlayerInventory inventory;
+    private WeaponData weaponData;
     [SerializeField] private LineRenderer line;
-
     public Transform firePoint;
+
+    [Header("Settings (Overridden by WeaponData if found)")]
     public float fireRate = 5f;
     public float range = 100f;
-    public float damage = 10f; // Temporary, change as needed
+    public float damage = 10f;
 
     private float nextFireTime;
 
     void Start()
     {
-        if (fireInput == null)
-            fireInput = Object.FindFirstObjectByType<FireInput>();
+        // Find dependencies
+        if (fireInput == null) fireInput = Object.FindFirstObjectByType<FireInput>();
+        if (playerController == null) playerController = Object.FindFirstObjectByType<PlayerController>();
 
-        if (playerController == null)
-            playerController = Object.FindFirstObjectByType<PlayerController>();
+        inventory = Object.FindFirstObjectByType<PlayerInventory>();
+        weaponData = GetComponent<WeaponData>();
 
-        if (line != null)
+        // Sync stats from WeaponData asset
+        if (weaponData != null)
+        {
+            fireRate = weaponData.fireRate;
+            range = weaponData.range;
+            damage = weaponData.damage;
+        }
+
+        if(line != null)
+{
             line.positionCount = 2;
+        }
+
     }
 
     void Update()
     {
-        if (fireInput == null || playerController == null || firePoint == null)
-            return;
+        if (fireInput == null || firePoint == null || inventory == null) return;
 
         Vector3 origin = firePoint.position;
-
         Vector3 dir = firePoint.forward;
 
-        // Update aim line every frame
+        // Update visual aim line
         if (dir.sqrMagnitude > 0.001f && line != null)
         {
             line.SetPosition(0, origin);
             line.SetPosition(1, origin + dir * range);
         }
 
-        // Fire logic
+        // Fire Logic
         if (fireInput.IsFiring && Time.time >= nextFireTime)
         {
             Fire(origin, dir);
             nextFireTime = Time.time + (1f / fireRate);
         }
 
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (firePoint != null)
+        // Reload Logic
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(firePoint.position, 0.05f);
+            Reload();
         }
     }
 
     void Fire(Vector3 origin, Vector3 dir)
     {
-        if (dir.sqrMagnitude < 0.001f)
+        int currentAmmo = inventory.GetCurrentAmmo();
+
+        if (currentAmmo <= 0)
+        {
+            Debug.Log("Out of ammo! Press R to reload.");
             return;
+        }
+
+        if (dir.sqrMagnitude < 0.001f) return;
+
+        // Subtract ammo and save it back to the Inventory slot
+        currentAmmo--;
+        inventory.SetCurrentAmmo(currentAmmo);
 
         Ray ray = new Ray(origin, dir);
-
-        Debug.DrawRay(origin, dir * range, Color.red, 0.2f);
-
         if (Physics.Raycast(ray, out RaycastHit hit, range))
         {
-            IDamageable damageable = hit.collider.GetComponent<IDamageable>();
-
-            if (damageable != null)
+            if (hit.collider.TryGetComponent<IDamageable>(out var damageable))
             {
                 damageable.TakeDamage(damage);
             }
@@ -92,6 +106,40 @@ public class WeaponController : MonoBehaviour
                 line.SetPosition(0, origin);
                 line.SetPosition(1, origin + dir * range);
             }
+        }
+    }
+
+    void Reload()
+    {
+        if (weaponData == null || inventory == null) return;
+
+        int currentAmmo = inventory.GetCurrentAmmo();
+        int needed = weaponData.magazineSize - currentAmmo;
+
+        if (needed <= 0) return;
+
+        int available = inventory.GetReserveAmmo(weaponData.ammoType);
+        int toLoad = Mathf.Min(needed, available);
+
+        if (toLoad <= 0)
+        {
+            Debug.Log("No reserve ammo left!");
+            return;
+        }
+
+        // Take from pool, put into gun
+        inventory.ConsumeReserveAmmo(weaponData.ammoType, toLoad);
+        inventory.SetCurrentAmmo(currentAmmo + toLoad);
+
+        Debug.Log($"Reloaded {toLoad} rounds. Mag now: {currentAmmo + toLoad}");
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (firePoint != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(firePoint.position, 0.05f);
         }
     }
 }

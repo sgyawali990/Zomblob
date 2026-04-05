@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4854532787671656}
   - component: {fileID: 6318206389304875010}
   - component: {fileID: -3969110711837699362}
+  - component: {fileID: -4859573668940027782}
   m_Layer: 0
   m_Name: Baseball_Bat_01
   m_TagString: Untagged
@@ -72,6 +73,33 @@ MonoBehaviour:
   swingAngle: 45
   verticalOffset: 90
   damage: 20
+--- !u!114 &-4859573668940027782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1602661717803204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d782115997de87547bda0e8c591fd726, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  weaponType: 0
+  displayName: Baseball Bat
+  isGun: 0
+  isMelee: 1
+  ammoType: 0
+  magazineSize: 0
+  maxReserveAmmo: 0
+  fireMode: 0
+  damage: 20
+  fireRate: 0
+  range: 1
+  reloadType: 0
+  reloadTime: 0
+  spread: 0
+  recoil: 0
 --- !u!1 &2123192282468287115
 GameObject:
   m_ObjectHideFlags: 0
