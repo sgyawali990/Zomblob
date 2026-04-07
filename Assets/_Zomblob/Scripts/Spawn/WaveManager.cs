@@ -4,25 +4,23 @@ using System.Collections;
 public class WaveManager : MonoBehaviour
 {
     [SerializeField] private ZombieSpawner spawner;
-
     [SerializeField] private int baseCount = 5;
     [SerializeField] private float breakBetweenWaves = 5f;
 
     private int waveIndex = 0;
-    private int toSpawn;
-    private int spawned;
-    private int alive;
+    private int alive = 0;
+    private bool wavesActive = true;
 
     private void OnEnable()
     {
-        spawner.EnemySpawned += HandleEnemySpawned;
-        EnemyHealth.EnemyDied += HandleEnemyDied; // static event example
+        spawner.EnemySpawned += OnEnemySpawned;
+        EnemyHealth.EnemyDied += OnEnemyDied;
     }
 
     private void OnDisable()
     {
-        spawner.EnemySpawned -= HandleEnemySpawned;
-        EnemyHealth.EnemyDied -= HandleEnemyDied;
+        spawner.EnemySpawned -= OnEnemySpawned;
+        EnemyHealth.EnemyDied -= OnEnemyDied;
     }
 
     private void Start()
@@ -30,32 +28,25 @@ public class WaveManager : MonoBehaviour
         StartCoroutine(RunWaves());
     }
 
-    IEnumerator RunWaves()
+    private IEnumerator RunWaves()
     {
-        while (true)
+        while (wavesActive)
         {
             waveIndex++;
-            toSpawn = baseCount + waveIndex * 2;
-            spawned = 0;
+            int toSpawn = baseCount + waveIndex * 2;
+            alive = 0;
 
-            spawner.BeginWave(toSpawn);
+            spawner.BeginWave(toSpawn, waveIndex);
 
-            // Wait until wave finished
-            while (!(spawned >= toSpawn && alive == 0))
+            while (alive > 0)
                 yield return null;
 
             yield return new WaitForSeconds(breakBetweenWaves);
         }
     }
 
-    private void HandleEnemySpawned()
-    {
-        spawned++;
-        alive++;
-    }
+    private void OnEnemySpawned() => alive++;
+    private void OnEnemyDied() => alive = Mathf.Max(0, alive - 1);
 
-    private void HandleEnemyDied()
-    {
-        alive = Mathf.Max(0, alive - 1);
-    }
+    public void StopWaves() => wavesActive = false;
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using Unity.VisualScripting;
+using UnityEngine.AI;
 
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
@@ -15,22 +15,26 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private Renderer enemyRenderer;
     [SerializeField] private Color hitColor = Color.red;
     [SerializeField] private float flashTime = 0.1f;
+    private Color originalColor;
 
     [Header("Knockback")]
     [SerializeField] private float knockbackForce = 3f;
+    private bool isKnockback = false;
+
+    [Header("DeathTimer")]
+    [SerializeField] private float deathTimer = 2f;
 
     private Rigidbody rb;
-    private UnityEngine.AI.NavMeshAgent agent;
-    private Color originalColor;
-
+    private NavMeshAgent agent;
     private ZombiePool owningPool;
+    private Camera mainCamera;
 
-    void Awake()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
-
+        agent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
+        mainCamera = Camera.main;
 
         if (enemyRenderer != null)
             originalColor = enemyRenderer.material.color;
@@ -48,70 +52,65 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         StartCoroutine(HitFlash());
 
-        if (agent != null)
-            agent.enabled = false;
+        if (!isKnockback)
+            StartCoroutine(KnockbackRoutine());
+    }
+
+    private IEnumerator KnockbackRoutine()
+    {
+        isKnockback = true;
+        if (agent != null) agent.enabled = false;
 
         if (rb != null)
         {
             rb.isKinematic = false;
 
-            Vector3 knockDir = transform.position - Camera.main.transform.position;
+            Vector3 knockDir = transform.position - mainCamera.transform.position;
             knockDir.y = 0;
             knockDir.Normalize();
 
             rb.AddForce(knockDir * knockbackForce, ForceMode.Impulse);
         }
 
-        StartCoroutine(ReenableAgent());
-    }
-
-    
-
-    IEnumerator ReenableAgent()
-    {
         yield return new WaitForSeconds(0.4f);
 
         if (rb != null)
         {
-            if (!rb.isKinematic)
-            {
-                rb.linearVelocity = Vector3.zero;
-                rb.angularVelocity = Vector3.zero;
-            }
-
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
             rb.isKinematic = true;
         }
 
-        if (agent != null && currentHealth > 0)
-            agent.enabled = true;
+        if (agent != null && currentHealth > 0) agent.enabled = true;
+        isKnockback = false;
     }
 
-    void Die()
+    private void Die()
     {
         EnemyDied?.Invoke();
 
-        if (agent != null)
-            agent.enabled = false;
+        if (agent != null) agent.enabled = false;
 
         if (rb != null)
         {
             rb.isKinematic = false;
             rb.AddForce(Vector3.up * 2f, ForceMode.Impulse);
         }
-        
-        // null check
-        if (owningPool != null)
-        {
-            owningPool.Release(gameObject);
-        }
-        else
-        {
-            // fallback for non-pooled zombies
-            Destroy(gameObject);
-        }
+
+        StartCoroutine(HandleDeath());
     }
 
-    IEnumerator HitFlash()
+    private IEnumerator HandleDeath()
+    {
+        yield return new WaitForSeconds(deathTimer);
+
+        if (owningPool != null)
+            owningPool.Release(gameObject);
+        else
+            Destroy(gameObject);
+    }
+
+    private IEnumerator HitFlash()
     {
         if (enemyRenderer != null)
         {
@@ -130,7 +129,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-
             rb.isKinematic = true;
         }
 
@@ -140,6 +138,4 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             agent.enabled = true;
         }
     }
-
-
 }
