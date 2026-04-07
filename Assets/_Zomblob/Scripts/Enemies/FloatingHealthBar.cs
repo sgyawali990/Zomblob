@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class FloatingHealthBar : MonoBehaviour
 {
     [SerializeField] private Slider slider;
-    [SerializeField] private Camera mainCamera;
     [SerializeField] private Transform targetTransform;
 
     public void updateHealthBar(float currentValue, float maxValue)
@@ -13,6 +12,11 @@ public class FloatingHealthBar : MonoBehaviour
     }
     void Update()
     {
-        trannsform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);
+        if (targetTransform != null)
+        {
+            transform.position = targetTransform.position + Vector3.up * 2f; // Adjust the height as needed
+            transform.LookAt(mainCamera.transform);
+            transform.Rotate(0, 180f, 0); // Flip the health bar to face the camera
+        }
     }
 }

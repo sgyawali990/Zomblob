@@ -139,6 +139,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatingHealthBar
   slider: {fileID: 680296762413779713}
+  mainCamera: {fileID: 0}
+  targetTransform: {fileID: 7342574915240424367}
 --- !u!1 &4949772658836842288
 GameObject:
   m_ObjectHideFlags: 0
