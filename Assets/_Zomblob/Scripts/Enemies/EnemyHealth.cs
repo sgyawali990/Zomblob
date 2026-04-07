@@ -11,6 +11,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private float maxHealth = 50f;
     private float currentHealth;
 
+    [SerializeField] FloatingHealthBar healthBar;
+
     [Header("Visual")]
     [SerializeField] private Renderer enemyRenderer;
     [SerializeField] private Color hitColor = Color.red;
@@ -35,6 +37,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         agent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
         mainCamera = Camera.main;
+        healthBar = GetComponentInChildren<FloatingHealthBar>();
 
         if (enemyRenderer != null)
             originalColor = enemyRenderer.material.color;
@@ -43,6 +46,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
+        healthBar.updateHealthBar(currentHealth, maxHealth);
 
         if (currentHealth <= 0)
         {
