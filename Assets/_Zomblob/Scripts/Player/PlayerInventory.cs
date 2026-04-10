@@ -80,12 +80,43 @@ public class PlayerInventory : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1)) Equip(0);
-        if (Input.GetKeyDown(KeyCode.Alpha2)) Equip(1);
+        // Toggle Slot 1: If already holding it, pull out the bat
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            if (equippedSlot == 0) EquipBat();
+            else Equip(0);
+        }
 
+        // Toggle Slot 2: If already holding it, pull out the bat
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            if (equippedSlot == 1) EquipBat();
+            else Equip(1);
+        }
+
+        // If you have no guns at all, make sure you're holding the bat
         if (slot1 == null && slot2 == null && currentWeaponInstance == null)
         {
-            Equip(0);
+            EquipBat();
+        }
+    }
+
+    public void EquipBat()
+    {
+        equippedSlot = -1; // Tell the UI that no gun slot is active
+
+        if (currentWeaponInstance != null)
+            Destroy(currentWeaponInstance);
+
+        if (batPrefab != null)
+        {
+            currentWeaponInstance = Instantiate(batPrefab, weaponSocket);
+            currentWeaponInstance.transform.localScale = Vector3.one;
+            AlignWeapon(currentWeaponInstance);
+        }
+        else
+        {
+            Debug.LogError("Bat Prefab NOT assigned in PlayerInventory!");
         }
     }
 
@@ -131,29 +162,21 @@ public class PlayerInventory : MonoBehaviour
 
     public void Equip(int slotIndex)
     {
+        // If we are trying to equip an empty slot, just call our Bat helper and stop
         GameObject prefab = (slotIndex == 0) ? slot1 : slot2;
+        if (prefab == null)
+        {
+            EquipBat();
+            return;
+        }
 
+        // Otherwise, proceed with equipping the gun
         equippedSlot = slotIndex;
 
         if (currentWeaponInstance != null)
             Destroy(currentWeaponInstance);
 
-        // IF SLOT EMPTY, SPAWN BAT
-        if (prefab == null)
-        {
-            if (batPrefab == null)
-            {
-                Debug.LogError("Bat Prefab NOT assigned in PlayerInventory!");
-                return;
-            }
-
-            currentWeaponInstance = Instantiate(batPrefab, weaponSocket);
-        }
-        else
-        {
-            currentWeaponInstance = Instantiate(prefab, weaponSocket);
-        }
-
+        currentWeaponInstance = Instantiate(prefab, weaponSocket);
         currentWeaponInstance.transform.localScale = Vector3.one;
 
         AlignWeapon(currentWeaponInstance);

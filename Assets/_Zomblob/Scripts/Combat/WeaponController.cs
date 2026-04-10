@@ -56,10 +56,23 @@ public class WeaponController : MonoBehaviour
         }
 
         // Fire Logic
-        if (fireInput.IsFiring && Time.time >= nextFireTime)
+        bool canFire = Time.time >= nextFireTime;
+
+        if (weaponData.fireMode == FireMode.FullAuto)
         {
-            Fire(origin, dir);
-            nextFireTime = Time.time + (1f / fireRate);
+            if (fireInput.IsFiring && canFire)
+            {
+                Fire(origin, dir);
+                nextFireTime = Time.time + (1f / fireRate);
+            }
+        }
+        else if (weaponData.fireMode == FireMode.SemiAuto)
+        {
+            if (Input.GetMouseButtonDown(0) && canFire)
+            {
+                Fire(origin, dir);
+                nextFireTime = Time.time + (1f / fireRate);
+            }
         }
 
         // Reload Logic
