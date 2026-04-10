@@ -4,27 +4,28 @@ using UnityEngine.UI;
 public class FloatingHealthBar : MonoBehaviour
 {
     [SerializeField] private Slider slider;
+    [SerializeField] private Transform targetTransform;
 
-    private Transform _CameraTransform;
-    private bool _isVisible = false;
+    private Camera mainCamera;
 
-    private void Awake()
+    void Start()
     {
-        _CameraTransform = Camera.main.transform;
-        gameObject.SetActive(false); // Initialize health bar to inactive
+        mainCamera = Camera.main;
     }
-    public void ShowAndUpdate(float currentValue, float maxValue)
-    {
-        if (!_isVisible)
-        {
-            gameObject.SetActive(true);
-            _isVisible = true;
-        }
 
+    public void UpdateHealthBar(float currentValue, float maxValue)
+    {
         slider.value = currentValue / maxValue;
     }
-    private void LateUpdate()
+
+    void Update()
     {
-        transform.LookAt(transform.position + _CameraTransform.rotation * Vector3.forward, _CameraTransform.rotation * Vector3.up);
+        if (targetTransform != null && mainCamera != null)
+        {
+            transform.position = targetTransform.position + Vector3.up * 2f;
+
+            transform.LookAt(mainCamera.transform);
+            transform.Rotate(0, 180f, 0);
+        }
     }
 }
