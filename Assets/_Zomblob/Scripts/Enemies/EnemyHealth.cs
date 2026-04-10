@@ -37,7 +37,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         agent = GetComponent<NavMeshAgent>();
         currentHealth = maxHealth;
         mainCamera = Camera.main;
-        healthBar = GetComponentInChildren<FloatingHealthBar>();
+        healthBar = GetComponentInChildren<FloatingHealthBar>(true);
 
         if (enemyRenderer != null)
             originalColor = enemyRenderer.material.color;
@@ -46,7 +46,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        healthBar.updateHealthBar(currentHealth, maxHealth);
+        healthBar.ShowAndUpdate(currentHealth, maxHealth);
 
         if (currentHealth <= 0)
         {
@@ -128,6 +128,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         owningPool = pool;
         currentHealth = maxHealth;
+        healthBar.gameObject.SetActive(false);
 
         if (rb != null)
         {

@@ -33,8 +33,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: -5, y: 0}
-  m_SizeDelta: {x: -20, y: 10}
+  m_AnchoredPosition: {x: -7.499999, y: 0}
+  m_SizeDelta: {x: -15, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4410282295997925747
 GameObject:
@@ -101,7 +101,7 @@ MonoBehaviour:
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
+    m_ColorMultiplier: 5
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
@@ -139,8 +139,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatingHealthBar
   slider: {fileID: 680296762413779713}
-  mainCamera: {fileID: 0}
-  targetTransform: {fileID: 7342574915240424367}
 --- !u!1 &4949772658836842288
 GameObject:
   m_ObjectHideFlags: 0
@@ -444,7 +442,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6401030854878353769}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d2fe5546f775c47d2820aa5e8a715f53, type: 3}
   m_Name: 
@@ -486,8 +484,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 5.04, y: 0}
-  m_SizeDelta: {x: 20.08, y: 0}
+  m_AnchoredPosition: {x: 5.319992, y: 0}
+  m_SizeDelta: {x: 19.45, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8235196765401751634
 CanvasRenderer:
@@ -539,6 +537,7 @@ GameObject:
   - component: {fileID: 1631818806791537548}
   - component: {fileID: 5340445393440828753}
   - component: {fileID: 7450587147370607114}
+  - component: {fileID: 5299606193969264008}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -629,3 +628,16 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &5299606193969264008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8456691341436909719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37dcf22340e6f964db4a2b4672c290d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloatingHealthBar
+  slider: {fileID: 680296762413779713}
