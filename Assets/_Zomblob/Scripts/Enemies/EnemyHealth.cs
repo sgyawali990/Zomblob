@@ -46,7 +46,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void TakeDamage(float amount)
     {
         currentHealth -= amount;
-        healthBar.updateHealthBar(currentHealth, maxHealth);
+        if (healthBar != null)
+        {
+            healthBar.UpdateHealthBar(currentHealth, maxHealth);
+        }
 
         if (currentHealth <= 0)
         {
