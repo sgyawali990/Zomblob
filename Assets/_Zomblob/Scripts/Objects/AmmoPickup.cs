@@ -49,4 +49,11 @@ public class AmmoPickup : MonoBehaviour
 
         Destroy(gameObject);
     }
+
+    public string GetInteractName()
+    {
+        // Simple and clean for ammo
+        return "Pick up Ammo";
+    }
+
 }

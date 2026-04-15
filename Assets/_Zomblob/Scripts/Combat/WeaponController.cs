@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections; // Added for Coroutines
 
 public class WeaponController : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class WeaponController : MonoBehaviour
     public float damage = 10f;
 
     private float nextFireTime;
+    private bool isBursting = false; 
 
     void Start()
     {
@@ -34,11 +36,10 @@ public class WeaponController : MonoBehaviour
             damage = weaponData.damage;
         }
 
-        if(line != null)
-{
+        if (line != null)
+        {
             line.positionCount = 2;
         }
-
     }
 
     void Update()
@@ -60,7 +61,7 @@ public class WeaponController : MonoBehaviour
 
         if (weaponData.fireMode == FireMode.FullAuto)
         {
-            if (fireInput.IsFiring && canFire)
+            if (Input.GetMouseButton(0) && canFire)
             {
                 Fire(origin, dir);
                 nextFireTime = Time.time + (1f / fireRate);
@@ -74,12 +75,42 @@ public class WeaponController : MonoBehaviour
                 nextFireTime = Time.time + (1f / fireRate);
             }
         }
+        // Burst fire logic
+        else if (weaponData.fireMode == FireMode.Burst)
+        {
+            if (Input.GetMouseButtonDown(0) && canFire && !isBursting)
+            {
+                StartCoroutine(BurstFire());
+            }
+        }
 
         // Reload Logic
         if (Input.GetKeyDown(KeyCode.R))
         {
             Reload();
         }
+    }
+
+    // BURST COROUTINE
+    IEnumerator BurstFire()
+    {
+        isBursting = true;
+        int shots = 3;
+
+        for (int i = 0; i < shots; i++)
+        {
+            if (inventory.GetCurrentAmmo() <= 0) break;
+
+            Vector3 currentOrigin = firePoint.position;
+            Vector3 currentDir = firePoint.forward;
+
+            Fire(currentOrigin, currentDir);
+
+            yield return new WaitForSeconds(1f / fireRate);
+        }
+
+        nextFireTime = Time.time + (1f / fireRate);
+        isBursting = false;
     }
 
     void Fire(Vector3 origin, Vector3 dir)

@@ -24,4 +24,14 @@ public class CratePickup : MonoBehaviour
             Debug.LogWarning("CratePickup: No weapon prefab assigned to this crate!");
         }
     }
+
+    public string GetInteractName()
+    {
+        if (weaponPrefab != null)
+        {
+            return "Pick up " + weaponPrefab.name;
+        }
+        return "Pick up Weapon";
+    }
+
 }

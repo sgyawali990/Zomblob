@@ -53,8 +53,10 @@ public class ZombieSpawner : MonoBehaviour
 
             if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 1f, NavMesh.AllAreas))
             {
-                if (Vector3.Distance(hit.position, player.position) >= minDistanceFromPlayer)
+                if (player == null || Vector3.Distance(hit.position, player.position) >= minDistanceFromPlayer)
+                {
                     return hit.position;
+                }
             }
         }
 
