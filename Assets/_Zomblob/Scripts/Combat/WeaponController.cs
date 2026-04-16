@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections; // Added for Coroutines
+using System.Collections;
 
 public class WeaponController : MonoBehaviour
 {
@@ -17,18 +17,16 @@ public class WeaponController : MonoBehaviour
     public float damage = 10f;
 
     private float nextFireTime;
-    private bool isBursting = false; 
+    private bool isBursting = false;
 
     void Start()
     {
-        // Find dependencies
         if (fireInput == null) fireInput = Object.FindFirstObjectByType<FireInput>();
         if (playerController == null) playerController = Object.FindFirstObjectByType<PlayerController>();
 
         inventory = Object.FindFirstObjectByType<PlayerInventory>();
         weaponData = GetComponent<WeaponData>();
 
-        // Sync stats from WeaponData asset
         if (weaponData != null)
         {
             fireRate = weaponData.fireRate;
@@ -36,10 +34,7 @@ public class WeaponController : MonoBehaviour
             damage = weaponData.damage;
         }
 
-        if (line != null)
-        {
-            line.positionCount = 2;
-        }
+        if (line != null) line.positionCount = 2;
     }
 
     void Update()
@@ -49,14 +44,12 @@ public class WeaponController : MonoBehaviour
         Vector3 origin = firePoint.position;
         Vector3 dir = firePoint.forward;
 
-        // Update visual aim line
         if (dir.sqrMagnitude > 0.001f && line != null)
         {
             line.SetPosition(0, origin);
             line.SetPosition(1, origin + dir * range);
         }
 
-        // Fire Logic
         bool canFire = Time.time >= nextFireTime;
 
         if (weaponData.fireMode == FireMode.FullAuto)
@@ -75,7 +68,6 @@ public class WeaponController : MonoBehaviour
                 nextFireTime = Time.time + (1f / fireRate);
             }
         }
-        // Burst fire logic
         else if (weaponData.fireMode == FireMode.Burst)
         {
             if (Input.GetMouseButtonDown(0) && canFire && !isBursting)
@@ -84,31 +76,19 @@ public class WeaponController : MonoBehaviour
             }
         }
 
-        // Reload Logic
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reload();
-        }
+        if (Input.GetKeyDown(KeyCode.R)) Reload();
     }
 
-    // BURST COROUTINE
     IEnumerator BurstFire()
     {
         isBursting = true;
         int shots = 3;
-
         for (int i = 0; i < shots; i++)
         {
             if (inventory.GetCurrentAmmo() <= 0) break;
-
-            Vector3 currentOrigin = firePoint.position;
-            Vector3 currentDir = firePoint.forward;
-
-            Fire(currentOrigin, currentDir);
-
+            Fire(firePoint.position, firePoint.forward);
             yield return new WaitForSeconds(1f / fireRate);
         }
-
         nextFireTime = Time.time + (1f / fireRate);
         isBursting = false;
     }
@@ -116,19 +96,39 @@ public class WeaponController : MonoBehaviour
     void Fire(Vector3 origin, Vector3 dir)
     {
         int currentAmmo = inventory.GetCurrentAmmo();
+        if (currentAmmo <= 0) return;
 
-        if (currentAmmo <= 0)
-        {
-            Debug.Log("Out of ammo! Press R to reload.");
-            return;
-        }
-
-        if (dir.sqrMagnitude < 0.001f) return;
-
-        // Subtract ammo and save it back to the Inventory slot
         currentAmmo--;
         inventory.SetCurrentAmmo(currentAmmo);
 
+        // SHOTGUN LOGIC
+        if (weaponData.weaponType == WeaponType.Shotgun)
+        {
+            int pellets = 8;
+            for (int i = 0; i < pellets; i++)
+            {
+                // Calculate spread for each pellet
+                Vector3 spreadDir = dir + new Vector3(
+                    Random.Range(-weaponData.spread, weaponData.spread),
+                    Random.Range(-weaponData.spread, weaponData.spread),
+                    Random.Range(-weaponData.spread, weaponData.spread)
+                );
+                spreadDir.Normalize();
+
+                Debug.DrawRay(origin, spreadDir * range, Color.yellow, 0.1f);
+
+                PerformRaycast(origin, spreadDir);
+            }
+        }
+        else // NORMAL WEAPON LOGIC
+        {
+            PerformRaycast(origin, dir);
+        }
+    }
+
+    // Extracted Raycast logic to keep Fire() clean
+    void PerformRaycast(Vector3 origin, Vector3 dir)
+    {
         Ray ray = new Ray(origin, dir);
         if (Physics.Raycast(ray, out RaycastHit hit, range))
         {
@@ -137,18 +137,10 @@ public class WeaponController : MonoBehaviour
                 damageable.TakeDamage(damage);
             }
 
-            if (line != null)
+            if (line != null && weaponData.weaponType != WeaponType.Shotgun)
             {
                 line.SetPosition(0, origin);
                 line.SetPosition(1, hit.point);
-            }
-        }
-        else
-        {
-            if (line != null)
-            {
-                line.SetPosition(0, origin);
-                line.SetPosition(1, origin + dir * range);
             }
         }
     }
@@ -156,26 +148,16 @@ public class WeaponController : MonoBehaviour
     void Reload()
     {
         if (weaponData == null || inventory == null) return;
-
         int currentAmmo = inventory.GetCurrentAmmo();
         int needed = weaponData.magazineSize - currentAmmo;
-
         if (needed <= 0) return;
 
         int available = inventory.GetReserveAmmo(weaponData.ammoType);
         int toLoad = Mathf.Min(needed, available);
+        if (toLoad <= 0) return;
 
-        if (toLoad <= 0)
-        {
-            Debug.Log("No reserve ammo left!");
-            return;
-        }
-
-        // Take from pool, put into gun
         inventory.ConsumeReserveAmmo(weaponData.ammoType, toLoad);
         inventory.SetCurrentAmmo(currentAmmo + toLoad);
-
-        Debug.Log($"Reloaded {toLoad} rounds. Mag now: {currentAmmo + toLoad}");
     }
 
     private void OnDrawGizmos()
