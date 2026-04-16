@@ -8,6 +8,7 @@ public class ZombieSpawner : MonoBehaviour
     public event Action EnemySpawned;
 
     [SerializeField] private ZombiePool pool;
+    [SerializeField] private BossPool bossPool;
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private float timeBetweenSpawns = 0.5f;
 
@@ -61,5 +62,17 @@ public class ZombieSpawner : MonoBehaviour
         }
 
         return center;
+    }
+
+    public void SpawnBoss()
+    {
+        var sp2 = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Length)];
+        Vector3 spawnPos = GetSafeNavMeshPosition(sp2.position, spawnRadius);
+
+        GameObject boss = pool.Get(spawnPos, Quaternion.identity);
+
+        boss.GetComponent<ZombieBossHealth>()?.Init(bossPool);
+
+        EnemySpawned?.Invoke();
     }
 }
