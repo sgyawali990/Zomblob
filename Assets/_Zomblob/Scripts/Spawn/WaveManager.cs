@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections;
+using System;
 
 public class WaveManager : MonoBehaviour
 {
     [SerializeField] private ZombieSpawner spawner;
     [SerializeField] private int baseCount = 5;
     [SerializeField] private float breakBetweenWaves = 5f;
+    [SerializeField] private int bossEveryNWaves = 5;
 
     private int waveIndex = 0;
     private int alive = 0;
@@ -33,10 +35,20 @@ public class WaveManager : MonoBehaviour
         while (wavesActive)
         {
             waveIndex++;
+            bool isBossWave = waveIndex % bossEveryNWaves == 0;
             int toSpawn = baseCount + waveIndex * 2;
+            if (isBossWave)
+            {
+                toSpawn = Mathf.RoundToInt(toSpawn * 0.7f);
+            }
             alive = 0;
 
             spawner.BeginWave(toSpawn, waveIndex);
+
+            if(isBossWave)
+            {
+                spawner.SpawnBoss();
+            }
 
             while (alive > 0)
                 yield return null;
