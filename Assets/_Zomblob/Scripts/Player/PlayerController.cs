@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed = 5f;
+    public float sprintSpeed = 10f;
     public float aimDistance = 10f;
 
     // World-space point the player is aiming at
@@ -36,6 +37,9 @@ public class PlayerController : MonoBehaviour
             Cursor.visible = !Cursor.visible;
         }
 
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift);
+        float currentSpeed = isSprinting ? sprintSpeed : moveSpeed;
+        
         Vector3 moveDir = camForward * v + camRight * h;
 
         Rigidbody rb = GetComponent<Rigidbody>();

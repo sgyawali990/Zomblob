@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1303869121318198942}
   - component: {fileID: 1303869121318198913}
+  - component: {fileID: 5687184079388121707}
   m_Layer: 0
   m_Name: normal man a
   m_TagString: Untagged
@@ -55,6 +56,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5687184079388121707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303869121318198912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85920042e35aede41a71deedc693c9eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Movement
+  moveSpeed: 2
+  runSpeed: 5
 --- !u!1001 &1303869121726273177
 PrefabInstance:
   m_ObjectHideFlags: 0
