@@ -345,9 +345,17 @@ MonoBehaviour:
   playerController: {fileID: 0}
   line: {fileID: -2315835264101661249}
   firePoint: {fileID: 8812126503767156897}
+  tracerPrefab: {fileID: 8978300895830071941, guid: 4bfe3153bc809bb4fac888cbe244834a, type: 3}
+  impactPrefab: {fileID: 42598405375072086, guid: b1c00f8e5ed257043a4480f528a67cfe, type: 3}
   fireRate: 6
   range: 50
   damage: 20
+  currentSpread: 0.02
+  maxSpreadMultiplier: 3
+  spreadIncreasePerShot: 0.02
+  spreadRecoverySpeed: 8
+  movementSpreadMultiplier: 2
+  firstShotAccuracyMultiplier: 0.8
 --- !u!114 &6883139391930404412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,6 +383,7 @@ MonoBehaviour:
   reloadTime: 0
   spread: 0
   recoil: 0
+  tracerWidth: 0.03
 --- !u!120 &-2315835264101661249
 LineRenderer:
   serializedVersion: 3
@@ -383,7 +392,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4333352267272680643}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

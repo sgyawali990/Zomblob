@@ -28,4 +28,7 @@ public class WeaponData : MonoBehaviour
     [Header("Spread / Recoil")]
     public float spread;
     public float recoil;
+
+    [Header("Tracer")]
+    public float tracerWidth = 0.05f;
 }

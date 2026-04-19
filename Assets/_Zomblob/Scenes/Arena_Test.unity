@@ -4410,6 +4410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 5
+  sprintSpeed: 10
   aimDistance: 10
 --- !u!23 &1363785171
 MeshRenderer:
