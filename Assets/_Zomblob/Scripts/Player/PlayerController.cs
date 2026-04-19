@@ -9,11 +9,15 @@ public class PlayerController : MonoBehaviour
     // World-space point the player is aiming at
     public Vector3 AimPoint { get; private set; }
 
+    //moved it to here so it dosne't have to run every frame
+    private Rigidbody rb;
+    
     void Start()
     {
         // Top-down aiming uses visible cursor
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -36,17 +40,15 @@ public class PlayerController : MonoBehaviour
         {
             Cursor.visible = !Cursor.visible;
         }
-
+        //sprinting (hopefully))
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
         float currentSpeed = isSprinting ? sprintSpeed : moveSpeed;
-        
-        Vector3 moveDir = camForward * v + camRight * h;
 
-        Rigidbody rb = GetComponent<Rigidbody>();
+        Vector3 moveDir = camForward * v + camRight * h;
 
         if (moveDir.sqrMagnitude > 0.001f)
         {
-            rb.MovePosition(rb.position + moveDir * moveSpeed * Time.deltaTime);
+            rb.MovePosition(rb.position + moveDir * currentSpeed * Time.deltaTime);
         }
 
         // Aim using mouse position in world
