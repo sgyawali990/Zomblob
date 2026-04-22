@@ -64,10 +64,25 @@ public class WeaponController : MonoBehaviour
         Vector3 origin = firePoint.position;
         Vector3 dir = firePoint.forward;
 
-        if (dir.sqrMagnitude > 0.001f && line != null)
+        bool isAiming = Input.GetMouseButton(1);
+
+        if (line != null)
         {
-            line.SetPosition(0, origin);
-            line.SetPosition(1, origin + dir * range);
+            line.enabled = isAiming;
+
+            if (isAiming && dir.sqrMagnitude > 0.001f)
+            {
+                Ray ray = new Ray(origin, dir);
+                Vector3 endPoint = origin + dir * range;
+
+                if (Physics.Raycast(ray, out RaycastHit hit, range))
+                {
+                    endPoint = hit.point;
+                }
+
+                line.SetPosition(0, origin);
+                line.SetPosition(1, endPoint);
+            }
         }
 
         bool canFire = Time.time >= nextFireTime;

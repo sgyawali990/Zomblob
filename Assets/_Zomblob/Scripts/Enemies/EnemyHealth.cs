@@ -8,7 +8,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public static event Action EnemyDied;
 
     [Header("Health")]
-    [SerializeField] private float maxHealth = 50f;
+    [SerializeField] private float maxHealth = 50f; 
     private float currentHealth;
 
     [SerializeField] FloatingHealthBar healthBar;
@@ -83,8 +83,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         if (rb != null)
         {
+            rb.isKinematic = false;
+
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+
             rb.isKinematic = true;
         }
 
@@ -134,6 +137,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         if (rb != null)
         {
+            rb.isKinematic = false;
+
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
 
