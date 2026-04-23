@@ -40,7 +40,13 @@ public class Movement : MonoBehaviour
         float targetValue = controller.CurrentSpeed;
 
         float current = mAnimator.GetFloat(SpeedHash);
-        float smoothed = Mathf.Lerp(current, targetValue, Time.deltaTime * acceleration);
+
+        float smoothed = Mathf.Lerp(current, targetValue, Time.deltaTime * 15f);
+
+        if (targetValue == 0f && current < 0.05f)
+        {
+            smoothed = 0f;
+        }
 
         mAnimator.SetFloat(SpeedHash, smoothed);
     }

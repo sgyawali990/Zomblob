@@ -29,8 +29,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
 
         Vector3 camForward = Camera.main.transform.forward;
         Vector3 camRight = Camera.main.transform.right;
@@ -40,17 +40,18 @@ public class PlayerController : MonoBehaviour
         camForward.Normalize();
         camRight.Normalize();
 
+        Vector3 moveDir = camForward * v + camRight * h;
+
+        bool hasInput = h != 0f || v != 0f;
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
         float speed = isSprinting ? sprintSpeed : moveSpeed;
 
-        Vector3 moveDir = camForward * v + camRight * h;
-
-        if (moveDir.sqrMagnitude > 0.001f)
+        if (hasInput)
         {
             rb.MovePosition(rb.position + moveDir.normalized * speed * Time.deltaTime);
         }
 
-        if (moveDir.sqrMagnitude > 0.001f)
+        if (hasInput)
         {
             CurrentSpeed = isSprinting ? 1f : 0.5f;
         }
