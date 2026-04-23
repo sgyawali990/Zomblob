@@ -233,6 +233,7 @@ GameObject:
   - component: {fileID: 8543115721335360891}
   - component: {fileID: 2598926323359598018}
   - component: {fileID: 2884084350569737892}
+  - component: {fileID: 2469639194568723982}
   m_Layer: 0
   m_Name: EnemyDummy
   m_TagString: Untagged
@@ -395,6 +396,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   moveSpeed: 2
   repathRate: 0.25
+  attackRange: 2
   playerTransform: {fileID: 0}
   damage: 10
   attackCooldown: 1
@@ -451,6 +453,28 @@ MonoBehaviour:
   _data:
     _json: '{"nest":{"source":"Macro","macro":null,"embed":null}}'
     _objectReferences: []
+--- !u!95 &2469639194568723982
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6401030854878353769}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: aaeb32cf0a92ffa40a0abed3c82f7982, type: 3}
+  m_Controller: {fileID: 9100000, guid: 7787acf6d7cd366419e4eaea4d62cfd8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7351296110361344048
 GameObject:
   m_ObjectHideFlags: 0
