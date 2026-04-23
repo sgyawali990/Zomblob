@@ -13,6 +13,7 @@ public class EnemyMovement : MonoBehaviour
     private NavMeshAgent agent;
 
     [Header("Target")]
+    [SerializeField] private float attackRange = 2f;
     [SerializeField] private Transform playerTransform;
 
     [Header("Damage")]
@@ -67,19 +68,38 @@ public class EnemyMovement : MonoBehaviour
             agent.SetDestination(playerTransform.position);
             repathTimer = repathRate;
         }
-    }
 
-
-    private void OnCollisionStay(Collision collision)
-    {
-        if (Time.time < nextAttackTime)
-            return;
-
-        if (collision.gameObject.TryGetComponent<PlayerHealth>(out PlayerHealth player))
+        if(Time.time < nextAttackTime)
         {
-            player.TakeDamage((int)damage);
+            return;
+        }
 
-            nextAttackTime = Time.time + attackCooldown;
+        float dist = Vector3.Distance(transform.position, playerTransform.position);
+
+        if(dist <= attackRange)
+        {
+            
+            if(playerTransform.TryGetComponent<PlayerHealth>(out PlayerHealth health))
+            {
+                
+                health.TakeDamage(damage);
+                nextAttackTime = Time.time + attackCooldown;
+                
+            }
         }
     }
+
+
+//     private void OnCollisionStay(Collision collision)
+//     {
+//         if (Time.time < nextAttackTime)
+//             return;
+
+//         if (collision.gameObject.TryGetComponent<PlayerHealth>(out PlayerHealth player))
+//         {
+//             player.TakeDamage((int)damage);
+
+//             nextAttackTime = Time.time + attackCooldown;
+//         }
+//     }
 }
