@@ -6,7 +6,7 @@ public class MainMenu : MonoBehaviour
     public string firstLevelName = "Level1";
     public string OptionsMenu = "options here";
     public string customizeMenu = "customize here";
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
         
