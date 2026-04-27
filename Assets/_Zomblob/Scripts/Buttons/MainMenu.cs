@@ -43,8 +43,8 @@ public class MainMenu : MonoBehaviour
     public void backToMenu()
     {
         FindObjectOfType<CameraSweep>().SweepToA();
-        Titlepage.SetActive(true);
         customizePage.SetActive(false);
+        Titlepage.SetActive(true);
     }
     public void quitGame()
     {
