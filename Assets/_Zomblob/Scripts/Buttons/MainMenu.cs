@@ -9,11 +9,13 @@ public class MainMenu : MonoBehaviour
 
     public GameObject Titlepage;
     public GameObject customizePage;
+    public GameObject OptionsPage;
 
     void Start()
     {
         Titlepage.SetActive(true);
         customizePage.SetActive(false);
+        OptionsPage.SetActive(false);
     }
 
     // Update is called once per frame
@@ -27,15 +29,20 @@ public class MainMenu : MonoBehaviour
     }
     public void openOptions()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(OptionsMenu);
+        FindObjectOfType<CameraSweep>().SweepToC();
+        Titlepage.SetActive(false);
+        OptionsPage.SetActive(true);
     }
     public void closeOptions()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+        FindObjectOfType<CameraSweep>().SweepToA();
+        OptionsPage.SetActive(false);
+        Titlepage.SetActive(true);
     }
     public void Customize()
     {
         FindObjectOfType<CameraSweep>().SweepToB();
+        OptionsPage.SetActive(false);
         Titlepage.SetActive(false);
         customizePage.SetActive(true);
 
@@ -43,6 +50,7 @@ public class MainMenu : MonoBehaviour
     public void backToMenu()
     {
         FindObjectOfType<CameraSweep>().SweepToA();
+        OptionsPage.SetActive(false);
         customizePage.SetActive(false);
         Titlepage.SetActive(true);
     }

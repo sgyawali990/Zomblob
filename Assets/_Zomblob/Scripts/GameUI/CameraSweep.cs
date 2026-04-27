@@ -5,36 +5,43 @@ public class CameraSweep : MonoBehaviour
 {
     public Transform camA;
     public Transform camB;
+    public Transform camC;
     public float duration = 2f;
     private Camera mainCam;
+    private Coroutine currentSweep;
 
     void Start() => mainCam = Camera.main;
 
-    public void SweepToB()
+    public void SweepToA()=> StartSweep(camA);
+    public void SweepToB()=> StartSweep(camB);
+    public void SweepToC()=> StartSweep(camC);
+
+
+    void StartSweep(Transform target)
     {
-        StartCoroutine(Sweep(camA, camB));
-    }
-    public void SweepToA()
-    {
-        StartCoroutine(Sweep(camB, camA));
+        if (currentSweep != null) StopCoroutine(currentSweep);
+        currentSweep = StartCoroutine(Sweep(target));
     }
 
-    IEnumerator Sweep(Transform from, Transform to)
+
+    IEnumerator Sweep(Transform to)
     {
         float elapsed = 0f;
+        
+        Vector3 startPos = mainCam.transform.position;
+        Quaternion startRot = mainCam.transform.rotation;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.SmoothStep(0f, 1f, elapsed / duration); // SmoothStep gives ease in/out
+            float t = Mathf.Clamp01(elapsed / duration);
 
-            mainCam.transform.position = Vector3.Lerp(from.position, to.position, t);
-            mainCam.transform.rotation = Quaternion.Slerp(from.rotation, to.rotation, t);
+            mainCam.transform.position = Vector3.Lerp(startPos, to.position, t);
+            mainCam.transform.rotation = Quaternion.Slerp(startRot, to.rotation, t);
 
             yield return null;
         }
-
-        // Snap to exact final position
         mainCam.transform.SetPositionAndRotation(to.position, to.rotation);
+        currentSweep = null;
     }
 }
