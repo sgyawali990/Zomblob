@@ -31,7 +31,7 @@ public class MainMenu : MonoBehaviour
     }
     public void Customize()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(customizeMenu);
+        FindObjectOfType<CameraSweep>().SweepToB();
     }
     public void quitGame()
     {
