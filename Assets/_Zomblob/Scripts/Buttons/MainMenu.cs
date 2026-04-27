@@ -7,9 +7,13 @@ public class MainMenu : MonoBehaviour
     public string OptionsMenu = "options here";
     public string customizeMenu = "customize here";
 
+    public GameObject Titlepage;
+    public GameObject customizePage;
+
     void Start()
     {
-        
+        Titlepage.SetActive(true);
+        customizePage.SetActive(false);
     }
 
     // Update is called once per frame
@@ -32,6 +36,15 @@ public class MainMenu : MonoBehaviour
     public void Customize()
     {
         FindObjectOfType<CameraSweep>().SweepToB();
+        Titlepage.SetActive(false);
+        customizePage.SetActive(true);
+
+    }
+    public void backToMenu()
+    {
+        FindObjectOfType<CameraSweep>().SweepToA();
+        Titlepage.SetActive(true);
+        customizePage.SetActive(false);
     }
     public void quitGame()
     {

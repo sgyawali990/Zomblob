@@ -14,6 +14,10 @@ public class CameraSweep : MonoBehaviour
     {
         StartCoroutine(Sweep(camA, camB));
     }
+    public void SweepToA()
+    {
+        StartCoroutine(Sweep(camB, camA));
+    }
 
     IEnumerator Sweep(Transform from, Transform to)
     {
