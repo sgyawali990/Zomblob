@@ -19,16 +19,22 @@ public class BossPool : MonoBehaviour
 
     }
 
-    public GameObject GetBoss()
+    public GameObject GetBoss(Vector3 position, Quaternion rotation)
     {
-        foreach(var boss in pool)
+        foreach (var obj in pool)
         {
-            if (!boss.activeInHierarchy)
+            if (!obj.activeInHierarchy)
             {
-                return boss;
+                obj.transform.position = position;
+                obj.transform.rotation = rotation;
+                obj.SetActive(true);
+                return obj;
             }
         }
-        Debug.LogWarning("No boss in pool");
-        return null;
+
+        // Pool exhausted, instantiate new enemy
+        GameObject newObj = Instantiate(Boss_PreFab, position, rotation);
+        pool.Add(newObj);
+        return newObj;
     }
 }

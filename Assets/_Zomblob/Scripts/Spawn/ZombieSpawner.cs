@@ -17,18 +17,37 @@ public class ZombieSpawner : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private float minDistanceFromPlayer = 5f;
 
-    public void BeginWave(int count, int waveIndex)
+    private Coroutine currentWaveRoutine;
+
+    
+    public IEnumerator BeginWaveRoutine(int count, int waveIndex)
     {
-        StopAllCoroutines();
-        float spawnDelay = Mathf.Max(0.1f, timeBetweenSpawns - waveIndex * 0.05f);
-        StartCoroutine(SpawnRoutine(count, spawnDelay));
+        if (currentWaveRoutine != null)
+            StopCoroutine(currentWaveRoutine);
+
+        float spawnDelay = Mathf.Max(0.15f, timeBetweenSpawns - waveIndex * 0.05f);
+
+        Debug.Log($"Spawning {count} zombies | Delay: {spawnDelay}");
+
+        yield return StartCoroutine(SpawnRoutine(count, spawnDelay));
+
+        Debug.Log("Wave spawning finished.");
     }
+
+    
+    // public void BeginWave(int count, int waveIndex)
+    // {
+    //     StartCoroutine(BeginWaveRoutine(count, waveIndex));
+    // }
 
     private IEnumerator SpawnRoutine(int count, float spawnDelay)
     {
         for (int i = 0; i < count; i++)
         {
             SpawnEnemy();
+
+            Debug.Log($"Spawned enemy {i + 1}/{count}");
+
             yield return new WaitForSeconds(spawnDelay);
         }
     }
@@ -54,7 +73,8 @@ public class ZombieSpawner : MonoBehaviour
 
             if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 1f, NavMesh.AllAreas))
             {
-                if (player == null || Vector3.Distance(hit.position, player.position) >= minDistanceFromPlayer)
+                if (player == null ||
+                    Vector3.Distance(hit.position, player.position) >= minDistanceFromPlayer)
                 {
                     return hit.position;
                 }
@@ -66,13 +86,15 @@ public class ZombieSpawner : MonoBehaviour
 
     public void SpawnBoss()
     {
-        var sp2 = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Length)];
-        Vector3 spawnPos = GetSafeNavMeshPosition(sp2.position, spawnRadius);
+        var sp = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Length)];
+        Vector3 spawnPos = GetSafeNavMeshPosition(sp.position, spawnRadius);
 
-        GameObject boss = pool.Get(spawnPos, Quaternion.identity);
+        GameObject boss = bossPool.GetBoss(spawnPos, Quaternion.identity);
 
         boss.GetComponent<ZombieBossHealth>()?.Init(bossPool);
 
         EnemySpawned?.Invoke();
+
+        Debug.Log("Boss Spawned!");
     }
 }
