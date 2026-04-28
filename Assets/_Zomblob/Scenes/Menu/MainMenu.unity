@@ -879,7 +879,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 35538274}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -1771,7 +1771,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 63710197}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -1824,7 +1824,7 @@ Transform:
   m_GameObject: {fileID: 63710197}
   serializedVersion: 2
   m_LocalRotation: {x: -0.090960324, y: -0.4830003, z: 0.056922805, w: -0.8690206}
-  m_LocalPosition: {x: 354.082, y: -20.646, z: 721.879}
+  m_LocalPosition: {x: 353.989, y: -20.622, z: 721.821}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3453,6 +3453,11 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3637134996410565414, guid: 9c6178fe943216540b276b975dafae16, type: 3}
   m_PrefabInstance: {fileID: 1869604543}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &156297657 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 29458573f39e6cb4ea78e5e46cad9dd9, type: 3}
+  m_PrefabInstance: {fileID: 582579978}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &156382763 stripped
 Transform:
@@ -11508,13 +11513,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1987387220}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 1987387225}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: characterSelectLeft
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -20627,6 +20632,11 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5707813131339434805, guid: b995a96a7ca36d04b851e46870b5aadf, type: 3}
   m_PrefabInstance: {fileID: 680982463}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1016808212 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 29458573f39e6cb4ea78e5e46cad9dd9, type: 3}
+  m_PrefabInstance: {fileID: 1249135583}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1018549047
 PrefabInstance:
@@ -30840,6 +30850,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9c6178fe943216540b276b975dafae16, type: 3}
+--- !u!1 &1572692130 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 29458573f39e6cb4ea78e5e46cad9dd9, type: 3}
+  m_PrefabInstance: {fileID: 1769301659}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1576901804
 GameObject:
   m_ObjectHideFlags: 0
@@ -32286,7 +32301,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1648223991}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1987387225}
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: characterSelectRight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1648223991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32370,6 +32397,11 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3637134996410565414, guid: 9c6178fe943216540b276b975dafae16, type: 3}
   m_PrefabInstance: {fileID: 1269989115}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1675720055 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 29458573f39e6cb4ea78e5e46cad9dd9, type: 3}
+  m_PrefabInstance: {fileID: 1594839461}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1677208525 stripped
 Transform:
@@ -36034,6 +36066,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 29458573f39e6cb4ea78e5e46cad9dd9, type: 3}
   m_PrefabInstance: {fileID: 582579978}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1868478691 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 29458573f39e6cb4ea78e5e46cad9dd9, type: 3}
+  m_PrefabInstance: {fileID: 757556972}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1869165870
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38508,6 +38545,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9c6178fe943216540b276b975dafae16, type: 3}
+--- !u!1 &1974092895 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 29458573f39e6cb4ea78e5e46cad9dd9, type: 3}
+  m_PrefabInstance: {fileID: 1249638961}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1974106903
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38921,6 +38963,13 @@ MonoBehaviour:
   Titlepage: {fileID: 1192202339}
   customizePage: {fileID: 899623706}
   OptionsPage: {fileID: 440689517}
+  characters:
+  - {fileID: 1572692130}
+  - {fileID: 1974092895}
+  - {fileID: 156297657}
+  - {fileID: 1868478691}
+  - {fileID: 1675720055}
+  - {fileID: 1016808212}
 --- !u!1001 &1989291079
 PrefabInstance:
   m_ObjectHideFlags: 0
