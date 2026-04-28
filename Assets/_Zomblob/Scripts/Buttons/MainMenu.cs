@@ -10,6 +10,7 @@ public class MainMenu : MonoBehaviour
     public GameObject Titlepage;
     public GameObject customizePage;
     public GameObject OptionsPage;
+    public GameObject[] characters;
 
     void Start()
     {
@@ -57,5 +58,33 @@ public class MainMenu : MonoBehaviour
     public void quitGame()
     {
         Application.Quit();
+    }
+    public void characterSelectLeft(){
+        for (int i=0; i<6; i++){
+            if (characters[i].activeInHierarchy){
+                characters[i].SetActive(false);
+                if (i==0){
+                    characters[5].SetActive(true);
+                }
+                else{
+                    characters[i-1].SetActive(true);
+                }
+                break;
+            }
+        }
+    }
+    public void characterSelectRight(){
+        for (int i=0; i<6; i++){
+            if (characters[i].activeInHierarchy){
+                characters[i].SetActive(false);
+                if (i==5){
+                    characters[0].SetActive(true);
+                }
+                else{
+                    characters[i+1].SetActive(true);
+                }
+                break;
+            }
+        }
     }
 }
