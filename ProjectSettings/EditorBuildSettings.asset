@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/_Zomblob/Scenes/Arena_Test.unity
     guid: 8711bc402d66d0044b3600db263ca4af
   - enabled: 1
-    path: Assets/_Zomblob/Scenes/Level 1.unity
+    path: Assets/_Zomblob/Scenes/Level 1/Level 1.unity
     guid: 9d8e98c89d2a8f44f8d694df33f242a5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
