@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-
+using UnityEngine.UI;
 public class CratePickup : MonoBehaviour
 {
     public enum CrateType { Fixed, Random }
@@ -16,6 +16,8 @@ public class CratePickup : MonoBehaviour
     [SerializeField] private TMPro.TextMeshProUGUI lootText;
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip spinSound;
+    [SerializeField] private Image lootIcon;
+    [SerializeField] private Sprite nothingSprite;
 
 
     [System.Serializable]
@@ -23,6 +25,7 @@ public class CratePickup : MonoBehaviour
     {
         public string itemName;
         public GameObject weapon;
+        public Sprite icon;
         public int weight;
         public bool isNothing;
     }
@@ -137,34 +140,60 @@ public class CratePickup : MonoBehaviour
 
     private void ShowUI(LootItem item)
     {
-        if (lootText == null) return;
+        if (lootIcon == null || lootText == null) return;
+
+        lootIcon.gameObject.SetActive(true);
         lootText.gameObject.SetActive(true);
 
-        if (item.isNothing || item.weapon == null)
+        // NOTHING CASE
+        if (item.isNothing || item.icon == null)
         {
-            lootText.text = "[ NOTHING ]";
+            lootIcon.sprite = nothingSprite;
+            lootIcon.color = Color.gray;
+
+            lootText.text = " NOTHING ";
             lootText.color = Color.gray;
+            return;
+        }
+
+        // ICON
+        lootIcon.sprite = item.icon;
+
+        // TEXT
+        string displayName = !string.IsNullOrEmpty(item.itemName)
+            ? item.itemName
+            : item.weapon.name;
+
+        lootText.text = displayName;
+
+        // COLOR BY RARITY
+        lootIcon.color = Color.white;
+
+        if (item.weight >= 25)
+        {
+            lootText.color = Color.white;
+        }
+        else if (item.weight >= 10)
+        {
+            lootText.color = Color.cyan;
+        }
+        else if (item.weight >= 3)
+        {
+            lootText.color = new Color(1f, 0.5f, 0f);
         }
         else
         {
-            string displayName = !string.IsNullOrEmpty(item.itemName) ? item.itemName : item.weapon.name;
-            lootText.text = "[" + displayName + "]";
-
-            // RARITY COLORS
-            if (item.weight >= 25) lootText.color = Color.white;      // common
-            else if (item.weight >= 10) lootText.color = Color.cyan;   // rare
-            else if (item.weight >= 3) lootText.color = new Color(1f, 0.5f, 0f); // orange/epic
-            else lootText.color = Color.magenta; // ultra rare/legendary
+            lootText.color = Color.magenta;
         }
     }
 
     private void HideUI()
     {
+        if (lootIcon != null)
+            lootIcon.gameObject.SetActive(false);
+
         if (lootText != null)
-        {
-            lootText.text = "";
             lootText.gameObject.SetActive(false);
-        }
     }
 
     public string GetInteractName()
