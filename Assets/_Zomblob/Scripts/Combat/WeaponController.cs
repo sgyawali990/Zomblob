@@ -55,7 +55,7 @@ public class WeaponController : MonoBehaviour
 
         HandleDynamicSpread();
 
-        // Optional Feel Fix: Faster recovery when NOT firing
+        // Faster recovery when NOT firing
         if (!Input.GetMouseButton(0))
         {
             currentSpread = Mathf.Lerp(currentSpread, weaponData.spread, Time.deltaTime * (spreadRecoverySpeed * 1.5f));
@@ -63,8 +63,10 @@ public class WeaponController : MonoBehaviour
 
         Vector3 origin = firePoint.position;
         Vector3 dir = firePoint.forward;
+        dir.y = 0;
+        dir.Normalize();
 
-        bool isAiming = Input.GetMouseButton(1);
+        /* bool isAiming = Input.GetMouseButton(1);
 
         if (line != null)
         {
@@ -84,6 +86,7 @@ public class WeaponController : MonoBehaviour
                 line.SetPosition(1, endPoint);
             }
         }
+        */
 
         bool canFire = Time.time >= nextFireTime;
 
@@ -142,12 +145,8 @@ public class WeaponController : MonoBehaviour
     private Vector3 GetSpreadDirection(Vector3 baseDir)
     {
         float spread = currentSpread;
-        Vector3 offset = new Vector3(
-            Random.Range(-spread, spread),
-            Random.Range(-spread, spread),
-            Random.Range(-spread, spread)
-        );
-        return (baseDir + offset).normalized;
+        Quaternion spreadRotation = Quaternion.Euler(0, Random.Range(-spread * 50f, spread * 50f), 0);
+        return (spreadRotation * baseDir).normalized;
     }
 
     IEnumerator BurstFire()
@@ -192,14 +191,10 @@ public class WeaponController : MonoBehaviour
             int pellets = 8;
             for (int i = 0; i < pellets; i++)
             {
-                // Shotgun Spread Fix: base + dynamic
                 float shotgunSpread = currentSpread + weaponData.spread;
-                Vector3 pelletDir = dir + new Vector3(
-                    Random.Range(-shotgunSpread, shotgunSpread),
-                    Random.Range(-shotgunSpread, shotgunSpread),
-                    Random.Range(-shotgunSpread, shotgunSpread)
-                );
-                pelletDir.Normalize();
+
+                Quaternion spreadRotation = Quaternion.Euler(0, Random.Range(-shotgunSpread * 50f, shotgunSpread * 50f), 0);
+                Vector3 pelletDir = spreadRotation * dir;
 
                 ProcessShot(origin, pelletDir);
             }

@@ -5,26 +5,60 @@ public class PlayerController : MonoBehaviour
     public float moveSpeed = 5f;
     public float sprintSpeed = 10f;
 
-    // Used by Movement.cs
     public float CurrentSpeed { get; private set; }
-
-    // World-space point the player is aiming at
     public Vector3 AimPoint { get; private set; }
 
     private Rigidbody rb;
+    private bool isMenuOpen = false;
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
         rb = GetComponent<Rigidbody>();
+
+        // Start game with aiming active
+        SetGameplayState(true);
     }
 
     void Update()
     {
-        HandleMovement();
-        HandleAiming();
+        // Toggle the menu state on ESC
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            isMenuOpen = !isMenuOpen;
+            SetGameplayState(!isMenuOpen);
+        }
+
+        if (!isMenuOpen)
+        {
+            HandleMovement();
+            HandleAiming();
+        }
+        else
+        {
+            CurrentSpeed = 0f;
+        }
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus)
+        {
+            SetGameplayState(!isMenuOpen);
+        }
+    }
+
+    private void SetGameplayState(bool playing)
+    {
+        if (playing)
+        {
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
     private void HandleMovement()
@@ -51,14 +85,7 @@ public class PlayerController : MonoBehaviour
             rb.MovePosition(rb.position + moveDir.normalized * speed * Time.deltaTime);
         }
 
-        if (hasInput)
-        {
-            CurrentSpeed = isSprinting ? 1f : 0.5f;
-        }
-        else
-        {
-            CurrentSpeed = 0f;
-        }
+        CurrentSpeed = !hasInput ? 0f : (isSprinting ? 1f : 0.5f);
     }
 
     private void HandleAiming()
