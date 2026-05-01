@@ -31,6 +31,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private ZombiePool owningPool;
     private Camera mainCamera;
 
+    [Header("Ammo Drop")]
+    [SerializeField] private GameObject ammoBoxPrefab;
+    [SerializeField] private float ammoDropChance = 0.3f;
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -97,6 +102,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void Die()
     {
+        TryDropAmmo();
         EnemyDied?.Invoke();
 
         if (agent != null) agent.enabled = false;
@@ -148,5 +154,27 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             agent.enabled = false;
             agent.enabled = true;
         }
+    }
+
+    private void TryDropAmmo()
+    {
+        if(AmmoBox == null)
+            return;
+
+        float roll = UnityEngine.Random.value;
+
+        if(roll <= ammoDropChance)
+        {
+            Vector3 dropPos = transform.position + Vector3.up * 0.5f;
+            Instantiate(AmmoBox, dropPos, Quaternion.identity);
+
+            Debug.Log($"Ammo dropped from {name}");
+        }
+        else
+    {
+        Debug.Log($"No ammo drop from {name}");
+    }
+
+
     }
 }
