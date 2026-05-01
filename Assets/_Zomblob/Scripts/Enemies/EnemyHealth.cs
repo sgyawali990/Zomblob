@@ -158,23 +158,21 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void TryDropAmmo()
     {
-        if(AmmoBox == null)
+        if (ammoBoxPrefab == null)
             return;
 
         float roll = UnityEngine.Random.value;
 
-        if(roll <= ammoDropChance)
+        if (roll <= ammoDropChance)
         {
             Vector3 dropPos = transform.position + Vector3.up * 0.5f;
-            Instantiate(AmmoBox, dropPos, Quaternion.identity);
+            Instantiate(ammoBoxPrefab, dropPos, Quaternion.identity);
 
             Debug.Log($"Ammo dropped from {name}");
         }
         else
-    {
-        Debug.Log($"No ammo drop from {name}");
-    }
-
-
+        {
+            Debug.Log($"No ammo drop from {name}");
+        }
     }
 }
