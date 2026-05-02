@@ -88,8 +88,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         if (rb != null)
         {
-            rb.isKinematic = false;
-
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
 
@@ -102,6 +100,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void Die()
     {
+
+        StopAllCoroutines();
+
+        if (enemyRenderer != null)
+            enemyRenderer.material.color = originalColor;
+        
         TryDropAmmo();
         EnemyDied?.Invoke();
 
@@ -140,10 +144,15 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         owningPool = pool;
         currentHealth = maxHealth;
 
+        if (healthBar != null)
+            healthBar.UpdateHealthBar(currentHealth, maxHealth);
+
+        if (enemyRenderer != null)
+            enemyRenderer.material.color = originalColor;
+
         if (rb != null)
         {
             rb.isKinematic = false;
-
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.isKinematic = true;
@@ -163,7 +172,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         float roll = UnityEngine.Random.value;
 
-        if (roll <= ammoDropChance)
+        if (roll < ammoDropChance)
         {
             Vector3 dropPos = transform.position + Vector3.up * 0.5f;
             Instantiate(ammoBoxPrefab, dropPos, Quaternion.identity);

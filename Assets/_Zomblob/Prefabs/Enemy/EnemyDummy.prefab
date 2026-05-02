@@ -327,12 +327,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 50
-  healthBar: {fileID: 0}
+  healthBar: {fileID: 1636103085971066937}
   enemyRenderer: {fileID: 4189619502915853677}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   flashTime: 0.1
   knockbackForce: 3
   deathTimer: 2
+  ammoBoxPrefab: {fileID: 4547515507698780930, guid: e40cbd589256c5b4690363765d53fce0, type: 3}
+  ammoDropChance: 0.3
 --- !u!54 &7120751141938013741
 Rigidbody:
   m_ObjectHideFlags: 0
