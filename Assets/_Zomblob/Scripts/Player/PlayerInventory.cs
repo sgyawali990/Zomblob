@@ -103,7 +103,7 @@ public class PlayerInventory : MonoBehaviour
 
     public void EquipBat()
     {
-        equippedSlot = -1; // Tell the UI that no gun slot is active
+        equippedSlot = -1;
 
         if (currentWeaponInstance != null)
             Destroy(currentWeaponInstance);
@@ -112,6 +112,12 @@ public class PlayerInventory : MonoBehaviour
         {
             currentWeaponInstance = Instantiate(batPrefab, weaponSocket);
             currentWeaponInstance.transform.localScale = Vector3.one;
+
+            if (currentWeaponInstance.TryGetComponent<BatController>(out var bat))
+            {
+                bat.Initialize(this.transform);
+            }
+
             AlignWeapon(currentWeaponInstance);
         }
         else

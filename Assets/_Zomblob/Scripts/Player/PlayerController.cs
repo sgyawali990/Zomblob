@@ -11,17 +11,20 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
     private bool isMenuOpen = false;
 
+    private Vector3 moveInput;
+    private bool isSprinting;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
 
-        // Start game with aiming active
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+
         SetGameplayState(true);
     }
 
     void Update()
     {
-        // Toggle the menu state on ESC
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             isMenuOpen = !isMenuOpen;
@@ -30,12 +33,25 @@ public class PlayerController : MonoBehaviour
 
         if (!isMenuOpen)
         {
-            HandleMovement();
+            HandleMovementInput(); 
             HandleAiming();
         }
         else
         {
             CurrentSpeed = 0f;
+            moveInput = Vector3.zero;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (isMenuOpen) return;
+
+        float speed = isSprinting ? sprintSpeed : moveSpeed;
+
+        if (moveInput.sqrMagnitude > 0.001f)
+        {
+            rb.MovePosition(rb.position + moveInput * speed * Time.fixedDeltaTime);
         }
     }
 
@@ -61,7 +77,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void HandleMovement()
+    private void HandleMovementInput()
     {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
@@ -74,36 +90,32 @@ public class PlayerController : MonoBehaviour
         camForward.Normalize();
         camRight.Normalize();
 
-        Vector3 moveDir = camForward * v + camRight * h;
+        moveInput = (camForward * v + camRight * h).normalized;
+
+        isSprinting = Input.GetKey(KeyCode.LeftShift);
 
         bool hasInput = h != 0f || v != 0f;
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift);
-        float speed = isSprinting ? sprintSpeed : moveSpeed;
-
-        if (hasInput)
-        {
-            rb.MovePosition(rb.position + moveDir.normalized * speed * Time.deltaTime);
-        }
-
         CurrentSpeed = !hasInput ? 0f : (isSprinting ? 1f : 0.5f);
     }
 
     private void HandleAiming()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, transform.position);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        if (groundPlane.Raycast(ray, out float distance))
         {
-            Vector3 aimPoint = hit.point;
-            aimPoint.y = transform.position.y;
+            Vector3 hitPoint = ray.GetPoint(distance);
+            hitPoint.y = transform.position.y;
 
-            AimPoint = aimPoint;
-
+            AimPoint = hitPoint;
             Vector3 lookDir = AimPoint - transform.position;
 
             if (lookDir.sqrMagnitude > 0.001f)
             {
-                transform.rotation = Quaternion.LookRotation(lookDir.normalized);
+                Quaternion targetRot = Quaternion.LookRotation(lookDir.normalized);
+
+                rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRot, Time.deltaTime * 15f));
             }
         }
     }
