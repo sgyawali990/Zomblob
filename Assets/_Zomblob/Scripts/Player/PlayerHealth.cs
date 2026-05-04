@@ -8,6 +8,8 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private float maxHealth = 100f;
     [SerializeField] private float regenRate = 5f;
     [SerializeField] private float regenDelay = 3f;
+    [SerializeField] private bool isDead = false;
+
 
     [Header("UI References")]
     [SerializeField] private Slider healthSlider;
@@ -21,9 +23,12 @@ public class PlayerHealth : MonoBehaviour
     private float lastDamageTime;
     private float flashAlpha = 0f;
 
+    private Animator animator;
+
     void Start()
     {
         currentHealth = maxHealth;
+        animator = GetComponent<Animator>();
         if (damageFlashImage != null) damageFlashImage.color = new Color(1, 0, 0, 0);
         UpdateUI();
     }
@@ -47,6 +52,8 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if (isDead) return;
+
         currentHealth -= damage;
         lastDamageTime = Time.time;
         flashAlpha = 0.4f;
@@ -77,6 +84,7 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log("Player has died.");
-        gameObject.SetActive(false);
+        isDead = true;
+        if (animator != null) animator.SetBool("isDead", true);
     }
 }
