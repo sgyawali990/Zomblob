@@ -13,6 +13,18 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private GameObject tracerPrefab;
     [SerializeField] private GameObject impactPrefab;
 
+    [Header("Magazine")]
+    [SerializeField] private GameObject magVisual;
+
+    [Header("Magazine Drop")]
+    [SerializeField] private Transform magSocket;
+    [SerializeField] private GameObject magDropPrefab;
+
+    [Header("Magazine Drop Scaling")]
+    [SerializeField] private Vector3 magDropScale = Vector3.one;
+
+    private bool hasDroppedMag = false;
+
     [Header("Settings (Overridden by WeaponData if found)")]
     public float fireRate = 5f;
     public float range = 100f;
@@ -55,7 +67,6 @@ public class WeaponController : MonoBehaviour
 
         HandleDynamicSpread();
 
-        // Faster recovery when NOT firing
         if (!Input.GetMouseButton(0))
         {
             currentSpread = Mathf.Lerp(currentSpread, weaponData.spread, Time.deltaTime * (spreadRecoverySpeed * 1.5f));
@@ -65,28 +76,6 @@ public class WeaponController : MonoBehaviour
         Vector3 dir = firePoint.forward;
         dir.y = 0;
         dir.Normalize();
-
-        /* bool isAiming = Input.GetMouseButton(1);
-
-        if (line != null)
-        {
-            line.enabled = isAiming;
-
-            if (isAiming && dir.sqrMagnitude > 0.001f)
-            {
-                Ray ray = new Ray(origin, dir);
-                Vector3 endPoint = origin + dir * range;
-
-                if (Physics.Raycast(ray, out RaycastHit hit, range))
-                {
-                    endPoint = hit.point;
-                }
-
-                line.SetPosition(0, origin);
-                line.SetPosition(1, endPoint);
-            }
-        }
-        */
 
         bool canFire = Time.time >= nextFireTime;
 
@@ -115,6 +104,19 @@ public class WeaponController : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.R)) Reload();
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            if (magVisual != null)
+            {
+                magVisual.SetActive(!magVisual.activeSelf);
+                Debug.Log($"Mag visibility toggled: {magVisual.activeSelf}");
+            }
+            else
+            {
+                Debug.LogError("MagVisual is NULL! Check your Inspector assignment.");
+            }
+        }
     }
 
     private void HandleDynamicSpread()
@@ -123,7 +125,6 @@ public class WeaponController : MonoBehaviour
 
         float baseSpread = weaponData.spread;
 
-        // MOVEMENT PENALTY
         float movementFactor = 0f;
         if (playerController != null)
         {
@@ -138,7 +139,6 @@ public class WeaponController : MonoBehaviour
         float movementSpread = baseSpread * movementSpreadMultiplier * movementFactor;
         float targetSpread = baseSpread + movementSpread;
 
-        // RECOVERY
         currentSpread = Mathf.Lerp(currentSpread, targetSpread, Time.deltaTime * spreadRecoverySpeed);
     }
 
@@ -171,14 +171,11 @@ public class WeaponController : MonoBehaviour
         currentAmmo--;
         inventory.SetCurrentAmmo(currentAmmo);
 
-        // BLOOM INCREASE
         currentSpread += spreadIncreasePerShot;
 
-        // HARD CAP
         float maxSpread = weaponData.spread * maxSpreadMultiplier;
         currentSpread = Mathf.Min(currentSpread, maxSpread);
 
-        // FIRST SHOT ACCURACY (tap fire reward)
         if (Time.time - lastFireTime > 0.3f)
         {
             currentSpread *= firstShotAccuracyMultiplier;
@@ -261,6 +258,11 @@ public class WeaponController : MonoBehaviour
 
     void Reload()
     {
+        if (inventory.GetCurrentAmmo() == 0)
+        {
+            HandleEmptyMag();
+        }
+
         if (weaponData == null || inventory == null) return;
         int currentAmmo = inventory.GetCurrentAmmo();
         int needed = weaponData.magazineSize - currentAmmo;
@@ -280,6 +282,74 @@ public class WeaponController : MonoBehaviour
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(firePoint.position, 0.05f);
+        }
+    }
+
+    void HandleEmptyMag()
+    {
+        if (hasDroppedMag) return;
+        hasDroppedMag = true;
+
+        if (magVisual != null)
+            magVisual.SetActive(false);
+
+        if (magDropPrefab != null && magSocket != null)
+        {
+            GameObject drop = Instantiate(magDropPrefab, magSocket.position, magSocket.rotation);
+
+            drop.transform.SetParent(null, true);
+
+            Vector3 baseScale = drop.transform.localScale;
+            drop.transform.localScale = Vector3.Scale(baseScale, magDropScale);
+
+            Debug.Log("Base Scale: " + baseScale);
+            Debug.Log("Final Scale: " + drop.transform.localScale);
+
+            Rigidbody rb = drop.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+
+                Vector3 force = transform.forward * 1.5f + Vector3.up * 1.5f;
+                rb.AddForce(force, ForceMode.Impulse);
+                rb.AddTorque(Random.insideUnitSphere * 2f, ForceMode.Impulse);
+            }
+
+            Destroy(drop, 1.5f);
+        }
+
+        StartCoroutine(RestoreMagAfterDelay());
+    }
+
+    IEnumerator RestoreMagAfterDelay()
+    {
+        float delay = weaponData != null ? weaponData.reloadTime : 1f;
+
+        yield return new WaitForSeconds(delay);
+
+        if (magVisual != null)
+            magVisual.SetActive(true);
+
+        hasDroppedMag = false;
+    }
+    IEnumerator ApplyScaleNextFrame(GameObject obj)
+    {
+        yield return null; // Wait 1 frame for Unity to finish its internal setup
+        if (obj != null)
+        {
+            obj.transform.localScale = magDropScale;
+        }
+    }
+
+    IEnumerator DebugScale(GameObject obj)
+    {
+        // We wait 0.1s to make sure Unity has finished all internal "Update" loops
+        yield return new WaitForSeconds(0.1f);
+
+        if (obj != null)
+        {
+            Debug.Log("Scale AFTER 0.1s: " + obj.transform.localScale);
         }
     }
 }

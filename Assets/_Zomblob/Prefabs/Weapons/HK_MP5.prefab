@@ -31,6 +31,7 @@ Transform:
   m_Children:
   - {fileID: 1052511830061492127}
   - {fileID: 1716438518027738442}
+  - {fileID: 1792718946094389231}
   m_Father: {fileID: 8825232825059512534}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: -90}
 --- !u!1 &3597041269697460098
@@ -349,6 +350,10 @@ MonoBehaviour:
   firePoint: {fileID: 2160224551358752915}
   tracerPrefab: {fileID: 8978300895830071941, guid: 4bfe3153bc809bb4fac888cbe244834a, type: 3}
   impactPrefab: {fileID: 42598405375072086, guid: b1c00f8e5ed257043a4480f528a67cfe, type: 3}
+  magVisual: {fileID: 3597041269697460098}
+  magSocket: {fileID: 1792718946094389231}
+  magDropPrefab: {fileID: 8885662806994379076, guid: 52f423a3b53c5f9488914a0abeb4d030, type: 3}
+  magDropScale: {x: 1, y: 1.6, z: 1.25}
   fireRate: 5
   range: 100
   damage: 10
@@ -525,4 +530,35 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8825232825059512534}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8401747622986473618
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1792718946094389231}
+  m_Layer: 0
+  m_Name: MagSocket
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1792718946094389231
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8401747622986473618}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0851, y: 0, z: -0.0319}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4847163014663040008}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

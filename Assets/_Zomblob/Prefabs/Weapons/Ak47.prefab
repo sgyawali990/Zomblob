@@ -62,6 +62,7 @@ Transform:
   m_Children:
   - {fileID: 8948830017274419609}
   - {fileID: 4937920335807348862}
+  - {fileID: 691493154584053309}
   m_Father: {fileID: 8192154067888809282}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &1529461942727952617
@@ -94,6 +95,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8192154067888809282}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2896986431408454254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 691493154584053309}
+  m_Layer: 0
+  m_Name: MagSocket
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &691493154584053309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2896986431408454254}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.0207, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5966577036195634439}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3381395271520288295
 GameObject:
@@ -214,7 +246,7 @@ Transform:
   m_GameObject: {fileID: 3930169469513552064}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.0001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -290,6 +322,10 @@ MonoBehaviour:
   firePoint: {fileID: 25183605025833907}
   tracerPrefab: {fileID: 8978300895830071941, guid: 4bfe3153bc809bb4fac888cbe244834a, type: 3}
   impactPrefab: {fileID: 42598405375072086, guid: b1c00f8e5ed257043a4480f528a67cfe, type: 3}
+  magVisual: {fileID: 3381395271520288295}
+  magSocket: {fileID: 691493154584053309}
+  magDropPrefab: {fileID: 8885662806994379076, guid: 52f423a3b53c5f9488914a0abeb4d030, type: 3}
+  magDropScale: {x: 1.35, y: 1.5, z: 1.25}
   fireRate: 5
   range: 65
   damage: 10
