@@ -31,6 +31,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8192154067888809282}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &542981653447029453
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8617815252606760976}
+  m_Layer: 0
+  m_Name: CasingEjectPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8617815252606760976
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542981653447029453}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.171, z: 0.33}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8192154067888809282}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &788630137448844203
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,6 +284,7 @@ Transform:
   - {fileID: 5966577036195634439}
   - {fileID: 8315785368977686349}
   - {fileID: 25183605025833907}
+  - {fileID: 8617815252606760976}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &7602252679908264872
@@ -335,6 +367,9 @@ MonoBehaviour:
   spreadRecoverySpeed: 5
   movementSpreadMultiplier: 1.6
   firstShotAccuracyMultiplier: 0.6
+  muzzleFlashPrefab: {fileID: 2497789510527484954, guid: 49e0f01c45b44f94bad9f16b4d88e9b5, type: 3}
+  casingEjectPoint: {fileID: 8617815252606760976}
+  casingPrefab: {fileID: 2540215785052380894, guid: 0ee964d195bb3684cbdd9bdf215e8db9, type: 3}
 --- !u!114 &1579311067540537398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,10 +394,17 @@ MonoBehaviour:
   fireRate: 9
   range: 100
   reloadType: 1
-  reloadTime: 3
+  reloadTime: 2.5
   spread: 0
   recoil: 0
+  muzzleFlashScale: 1.4
+  muzzleFlashCount: 8
   tracerWidth: 0.05
+  fireSound: {fileID: 8300000, guid: 55d2f4b66b2f14c47960223ab22c583e, type: 3}
+  reloadSound: {fileID: 8300000, guid: 5e14f248da789224dbaeb5deb63e81fa, type: 3}
+  fireVolume: 0.7
+  reloadVolume: 1
+  reloadPitchMultiplier: 1
 --- !u!120 &3014426456953042069
 LineRenderer:
   serializedVersion: 3

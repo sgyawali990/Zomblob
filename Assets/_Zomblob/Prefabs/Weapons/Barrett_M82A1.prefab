@@ -219,6 +219,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7979598176507686574}
   - {fileID: 4286447436336030064}
   - {fileID: 1588229484889064218}
   - {fileID: 7878060033861651523}
@@ -304,6 +305,9 @@ MonoBehaviour:
   spreadRecoverySpeed: 3
   movementSpreadMultiplier: 5
   firstShotAccuracyMultiplier: 0.1
+  muzzleFlashPrefab: {fileID: 2497789510527484954, guid: 49e0f01c45b44f94bad9f16b4d88e9b5, type: 3}
+  casingEjectPoint: {fileID: 7979598176507686574}
+  casingPrefab: {fileID: 9044760541753319675, guid: 2e3c2ff8aae428e449d2f2439919a527, type: 3}
 --- !u!114 &-3265552943695424934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,10 +332,17 @@ MonoBehaviour:
   fireRate: 1.5
   range: 100
   reloadType: 1
-  reloadTime: 4
+  reloadTime: 2.8
   spread: 0
   recoil: 0
+  muzzleFlashScale: 3
+  muzzleFlashCount: 16
   tracerWidth: 0.08
+  fireSound: {fileID: 8300000, guid: 68551283350b4894cbb53b38dc615b3f, type: 3}
+  reloadSound: {fileID: 8300000, guid: 5e14f248da789224dbaeb5deb63e81fa, type: 3}
+  fireVolume: 0.85
+  reloadVolume: 1
+  reloadPitchMultiplier: 1
 --- !u!120 &1548949194834514300
 LineRenderer:
   serializedVersion: 3
@@ -557,6 +568,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.21800005, z: 2.638}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7231029872169932655}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8945155239658973617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7979598176507686574}
+  m_Layer: 0
+  m_Name: CasingEjectPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7979598176507686574
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8945155239658973617}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.224, z: 0.605}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

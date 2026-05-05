@@ -90,6 +90,37 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2707437200046101743
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7024906938084902097}
+  m_Layer: 0
+  m_Name: CasingEjectPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7024906938084902097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2707437200046101743}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.188, z: 0.117}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9170773779665870284}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3662728205787041662
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,6 +216,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7024906938084902097}
   - {fileID: 7479236899170994013}
   - {fileID: 2746199003259344704}
   - {fileID: 8812126503767156897}
@@ -270,6 +302,9 @@ MonoBehaviour:
   spreadRecoverySpeed: 8
   movementSpreadMultiplier: 2
   firstShotAccuracyMultiplier: 0.8
+  muzzleFlashPrefab: {fileID: 2497789510527484954, guid: 49e0f01c45b44f94bad9f16b4d88e9b5, type: 3}
+  casingEjectPoint: {fileID: 7024906938084902097}
+  casingPrefab: {fileID: 1978152833271058258, guid: f747461003528f54b9d9fca1c614f267, type: 3}
 --- !u!114 &6883139391930404412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,10 +329,17 @@ MonoBehaviour:
   fireRate: 6
   range: 50
   reloadType: 1
-  reloadTime: 0
+  reloadTime: 1.4
   spread: 0
   recoil: 0
+  muzzleFlashScale: 0.8
+  muzzleFlashCount: 5
   tracerWidth: 0.03
+  fireSound: {fileID: 8300000, guid: 343e3ef5de120714e9b81d057723282e, type: 3}
+  reloadSound: {fileID: 8300000, guid: 5e14f248da789224dbaeb5deb63e81fa, type: 3}
+  fireVolume: 0.7
+  reloadVolume: 1
+  reloadPitchMultiplier: 1
 --- !u!120 &-2315835264101661249
 LineRenderer:
   serializedVersion: 3

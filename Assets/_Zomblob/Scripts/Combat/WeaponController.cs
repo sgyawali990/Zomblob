@@ -38,9 +38,21 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private float movementSpreadMultiplier = 1.5f;
     [SerializeField] private float firstShotAccuracyMultiplier = 0.5f;
 
+    [Header("Muzzle Flash")]
+    [SerializeField] private GameObject muzzleFlashPrefab;
+
+    [Header("Casing Ejection")]
+    [SerializeField] private Transform casingEjectPoint;
+    [SerializeField] private GameObject casingPrefab;
+
+    private bool isReloading = false;
+    private Coroutine reloadCoroutine;
+
     private float nextFireTime;
     private float lastFireTime;
     private bool isBursting = false;
+
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -59,11 +71,18 @@ public class WeaponController : MonoBehaviour
         }
 
         if (line != null) line.positionCount = 2;
+
+        audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
     {
         if (fireInput == null || firePoint == null || inventory == null) return;
+
+        if (isReloading) return;
 
         HandleDynamicSpread();
 
@@ -77,10 +96,11 @@ public class WeaponController : MonoBehaviour
         dir.y = 0;
         dir.Normalize();
 
-        bool canFire = Time.time >= nextFireTime;
+        bool canFire = Time.time >= nextFireTime && !isReloading;
 
         if (weaponData.fireMode == FireMode.FullAuto)
         {
+            // Full auto check
             if (Input.GetMouseButton(0) && canFire)
             {
                 Fire(origin, dir);
@@ -89,6 +109,7 @@ public class WeaponController : MonoBehaviour
         }
         else if (weaponData.fireMode == FireMode.SemiAuto)
         {
+            // Semi auto check
             if (Input.GetMouseButtonDown(0) && canFire)
             {
                 Fire(origin, dir);
@@ -97,15 +118,20 @@ public class WeaponController : MonoBehaviour
         }
         else if (weaponData.fireMode == FireMode.Burst)
         {
+            // Burst check
             if (Input.GetMouseButtonDown(0) && canFire && !isBursting)
             {
                 StartCoroutine(BurstFire());
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.R)) Reload();
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading)
+        {
+            reloadCoroutine = StartCoroutine(ReloadRoutine());
+        }
 
-        if (Input.GetKeyDown(KeyCode.T))
+        /*
+         * if (Input.GetKeyDown(KeyCode.T))
         {
             if (magVisual != null)
             {
@@ -117,6 +143,7 @@ public class WeaponController : MonoBehaviour
                 Debug.LogError("MagVisual is NULL! Check your Inspector assignment.");
             }
         }
+        */
     }
 
     private void HandleDynamicSpread()
@@ -155,8 +182,14 @@ public class WeaponController : MonoBehaviour
         int shots = 3;
         for (int i = 0; i < shots; i++)
         {
-            if (inventory.GetCurrentAmmo() <= 0) break;
+            if (isReloading)
+                break;
+
+            if (inventory.GetCurrentAmmo() <= 0)
+                break;
+
             Fire(firePoint.position, firePoint.forward);
+
             yield return new WaitForSeconds(1f / fireRate);
         }
         nextFireTime = Time.time + (1f / fireRate);
@@ -165,8 +198,18 @@ public class WeaponController : MonoBehaviour
 
     void Fire(Vector3 origin, Vector3 dir)
     {
+        if (isReloading) return;
+
         int currentAmmo = inventory.GetCurrentAmmo();
         if (currentAmmo <= 0) return;
+
+        SpawnMuzzleFlash();
+        PlayFireSound();
+
+        if (weaponData.weaponType != WeaponType.Shotgun)
+        {
+            EjectCasing();
+        }
 
         currentAmmo--;
         inventory.SetCurrentAmmo(currentAmmo);
@@ -200,6 +243,110 @@ public class WeaponController : MonoBehaviour
         {
             ProcessShot(origin, GetSpreadDirection(dir));
         }
+    }
+
+    void PlayFireSound()
+    {
+        if (weaponData == null || weaponData.fireSound == null) return;
+
+        float pitchVariance = weaponData.fireRate > 8 ? 0.04f : 0.02f;
+        audioSource.pitch = Random.Range(1f - pitchVariance, 1f + pitchVariance);
+        audioSource.PlayOneShot(weaponData.fireSound, weaponData.fireVolume);
+    }
+
+    void SpawnMuzzleFlash()
+    {
+        if (muzzleFlashPrefab == null || firePoint == null) return;
+
+        GameObject flash = Instantiate(
+            muzzleFlashPrefab,
+            firePoint.position,
+            firePoint.rotation
+        );
+
+        flash.transform.SetParent(firePoint);
+
+        var ps = flash.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            var main = ps.main;
+
+            float baseSize = 0.2f;
+            main.startSize = baseSize * weaponData.muzzleFlashScale;
+
+            var emission = ps.emission;
+            emission.SetBursts(new ParticleSystem.Burst[]
+            {
+            new ParticleSystem.Burst(0, (short)weaponData.muzzleFlashCount)
+            });
+        }
+
+        flash.transform.Rotate(0, 0, Random.Range(0, 360));
+        Destroy(flash, 0.08f);
+    }
+
+    void EjectCasing()
+    {
+        if (casingPrefab == null || casingEjectPoint == null) return;
+
+        GameObject casing = Instantiate(
+            casingPrefab,
+            casingEjectPoint.position,
+            casingEjectPoint.rotation
+        );
+
+        casing.transform.SetParent(null);
+
+        Rigidbody rb = casing.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            // BASE EJECTION DIRECTION (RIGHT SIDE + UP)
+            Vector3 ejectDir =
+                casingEjectPoint.right * Random.Range(1.5f, 2.5f) +
+                casingEjectPoint.up * Random.Range(0.8f, 1.5f);
+
+            float forceMultiplier = 1f;
+
+            switch (weaponData.weaponType)
+            {
+                case WeaponType.Glock:
+                case WeaponType.MP5:
+                    forceMultiplier = 1.2f;
+                    break;
+
+                case WeaponType.AK47:
+                    forceMultiplier = 1.5f;
+                    break;
+
+                case WeaponType.M16A1:
+                    forceMultiplier = 1.3f;
+                    break;
+
+                case WeaponType.Barrett:
+                    forceMultiplier = 0.8f;
+                    break;
+
+                case WeaponType.Shotgun:
+                    forceMultiplier = 1.0f;
+                    break;
+            }
+
+            rb.AddForce(ejectDir * forceMultiplier, ForceMode.Impulse);
+
+            rb.AddTorque(
+                new Vector3(
+                    Random.Range(2f, 6f),
+                    Random.Range(2f, 6f),
+                    Random.Range(2f, 6f)
+                ),
+                ForceMode.Impulse
+            );
+        }
+
+        Destroy(casing, 10f);
     }
 
     private void ProcessShot(Vector3 origin, Vector3 direction)
@@ -256,24 +403,97 @@ public class WeaponController : MonoBehaviour
         Destroy(tracer, 0.05f);
     }
 
-    void Reload()
+    IEnumerator ReloadRoutine()
     {
-        if (inventory.GetCurrentAmmo() == 0)
+        if (weaponData == null || inventory == null) yield break;
+
+        // Check if we even need to reload
+        int currentAmmo = inventory.GetCurrentAmmo();
+        if (currentAmmo >= weaponData.magazineSize) yield break;
+
+        int available = inventory.GetReserveAmmo(weaponData.ammoType);
+        if (available <= 0) yield break;
+
+        isReloading = true;
+
+        // Route to the correct reload logic
+        if (weaponData.reloadType == ReloadType.PerShell)
+        {
+            yield return StartCoroutine(ReloadPerShell());
+        }
+        else
+        {
+            yield return StartCoroutine(ReloadMagazine());
+        }
+
+        isReloading = false;
+    }
+
+    IEnumerator ReloadPerShell()
+    {
+        while (true)
+        {
+            int currentAmmo = inventory.GetCurrentAmmo();
+            int reserve = inventory.GetReserveAmmo(weaponData.ammoType);
+
+            if (currentAmmo >= weaponData.magazineSize) break;
+            if (reserve <= 0) break;
+
+            if (Input.GetMouseButtonDown(0)) break;
+
+            PlayReloadSound();
+
+            yield return new WaitForSeconds(weaponData.reloadTime);
+
+            inventory.SetCurrentAmmo(currentAmmo + 1);
+            inventory.ConsumeReserveAmmo(weaponData.ammoType, 1);
+        }
+    }
+
+    IEnumerator ReloadMagazine()
+    {
+        int currentAmmo = inventory.GetCurrentAmmo();
+        int needed = weaponData.magazineSize - currentAmmo;
+        int available = inventory.GetReserveAmmo(weaponData.ammoType);
+
+        PlayReloadSound();
+
+        // EMPTY MAG DROP
+        if (currentAmmo == 0)
         {
             HandleEmptyMag();
         }
 
-        if (weaponData == null || inventory == null) return;
-        int currentAmmo = inventory.GetCurrentAmmo();
-        int needed = weaponData.magazineSize - currentAmmo;
-        if (needed <= 0) return;
+        yield return new WaitForSeconds(weaponData.reloadTime);
 
-        int available = inventory.GetReserveAmmo(weaponData.ammoType);
         int toLoad = Mathf.Min(needed, available);
-        if (toLoad <= 0) return;
-
         inventory.ConsumeReserveAmmo(weaponData.ammoType, toLoad);
         inventory.SetCurrentAmmo(currentAmmo + toLoad);
+
+        hasDroppedMag = false;
+        if (magVisual != null) magVisual.SetActive(true);
+    }
+
+    void PlayReloadSound()
+    {
+        if (weaponData == null || weaponData.reloadSound == null) return;
+
+        if (weaponData.reloadType == ReloadType.Magazine)
+        {
+            float clipLength = weaponData.reloadSound.length;
+            float targetTime = weaponData.reloadTime;
+
+            float pitch = clipLength / targetTime;
+            pitch = Mathf.Clamp(pitch, 0.7f, 1.3f);
+
+            audioSource.pitch = pitch;
+        }
+        else
+        {
+            audioSource.pitch = 1f;
+        }
+
+        audioSource.PlayOneShot(weaponData.reloadSound, weaponData.reloadVolume);
     }
 
     private void OnDrawGizmos()
